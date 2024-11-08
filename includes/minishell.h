@@ -14,17 +14,17 @@
 # define MINISHELL_L
 
 # include "../libft/libft.h"
+# include <dirent.h>
 # include <malloc.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-#include <dirent.h>
-#include <sys/stat.h>
 
 typedef struct s_master
 {
@@ -57,4 +57,6 @@ void		ft_arrtab(char **arr);
 char		*ft_slice(char *str, char ch);
 char		*remove_if_even(char *str, char ch);
 void		ft_concert_env(t_master *master);
+int			validpipe(char *str);
+int			its_ok(char *str);
 #endif

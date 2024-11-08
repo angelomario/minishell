@@ -99,8 +99,10 @@ int	wait_prompt(t_master *master)
 	free_matriz(master->in);
 	master->in = ft_split(master->imput, '|');
 	rm_void(master->in);
+	if (!validpipe(master->imput))
+		return (1);
 	if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
-				'|') == ft_count_matriz(master->in)))
+				'|') >= ft_count_matriz(master->in)))
 	{
 		wait_prompt(master);
 	}
@@ -113,8 +115,17 @@ int	do_pipe(t_master *master)
 
 	rm_void(master->in);
 	if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
-				'|') == ft_count_matriz(master->in)))
+				'|') >= ft_count_matriz(master->in)))
+	{
+		if (wait_prompt(master))
+		{
+			printf("bash: syntax error near unexpected token `|'");
+			return (1);
+		}
+		if (!its_ok(master->imput))
+			return (printf("Error\n"), 1);
 		wait_prompt(master);
+	}
 	in = master->in;
 	while (*in)
 	{
@@ -123,6 +134,7 @@ int	do_pipe(t_master *master)
 	}
 	return (0);
 }
+
 int	validpipe(char *str)
 {
 	int	i;
@@ -169,7 +181,7 @@ int	its_ok(char *str)
 
 int	main(int ac, char **av, char **env)
 {
-	t_master *master;
+	t_master	*master;
 
 	(void)ac;
 	(void)av;
