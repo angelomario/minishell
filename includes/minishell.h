@@ -23,6 +23,8 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 typedef struct s_master
 {
@@ -31,7 +33,7 @@ typedef struct s_master
 	char	**in;
 	char	**history;
 	char	**environ;
-
+	char	***cmd;
 }			t_master;
 
 // char	**ft_split(char const *s, char c);

@@ -72,6 +72,46 @@ void	ft_arrtab(char **arr)
 	}
 }
 
+int	ft_countrp(char *str, char *to_find)
+{
+	int	i;
+	int	k;
+	int	j;
+
+	i = -1;
+	k = 0;
+	j = 0;
+	while (str && str[++i])
+	{
+		k = 0;
+		while ((str[i] == to_find[k]) && to_find[k])
+		{
+			i++;
+			k++;
+		}
+		if (str[i] == to_find[0])
+			return (-1);
+		if (to_find[k] == '\0')
+			j++;
+	}
+	return (j);
+}
+
+// char	***ft_parse(t_master *master)
+// {
+// 	int	i;
+// 	char	*tmp;
+
+// 	i = -1;
+// 	imput = master->imput;
+
+// 	while (master->imput[++i])
+// 	{
+// 		tmp[i] = master->imput[i];
+// 	}
+
+// }
+
 char	*ft_slice(char *str, char ch)
 {
 	int		i;
