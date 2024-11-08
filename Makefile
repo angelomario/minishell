@@ -67,7 +67,7 @@ push: fclean
 aquissan:
 	clear;
 	git branch;
-	git checkout master && git branch && git merge $@;
+	git checkout main && git branch && git merge $@;
 	git checkout $@;
 	git branch;
 
