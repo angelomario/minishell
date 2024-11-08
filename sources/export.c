@@ -36,10 +36,109 @@ char	*get_name(char *str)
 	return (name);
 }
 
+int	list_dirs(void)
+{
+	struct dirent	*entry;
+	struct stat		info;
+	DIR				*dir;
+
+	dir = opendir("./*");
+	while ((entry = readdir(dir)) != NULL)
+	{
+		if (ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name,
+				"..") == 0)
+		{
+			continue ;
+		}
+		if (stat(entry->d_name, &info) == 0 && S_ISDIR(info.st_mode))
+		{
+			printf("bash: export: `%s': not a valid identifier\n",
+				entry->d_name);
+		}
+	}
+	closedir(dir);
+	return (1);
+}
+
+// int	list_all(const char *path)
+// {
+// 	struct dirent	*entry;
+// 	struct stat		info;
+// 	DIR				*dir;
+
+// 	dir = opendir(path);
+// 	if (dir == NULL)
+// 		return (-1);
+// 	while ((entry = readdir(dir)) != NULL)
+// 	{
+// 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+// 			continue ;
+// 		if (stat(full_path, &info) == 0)
+// 		{
+// 			if (S_ISDIR(info.st_mode))
+// 			{
+// 				printf("Diretório: %s\n", entry->d_name);
+// 				// Chama a função recursivamente para listar subdiretórios
+// 				list_all(entry->d_name);
+// 			}
+// 			else if (S_ISREG(info.st_mode))
+// 				printf("bash: `%s'\n", entry->d_name);
+// 		}
+// 	}
+// 	return (closedir(dir));
+// }
+
+int	check_identifiers(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str && !ft_strcmp(str, "*/"))
+		return (list_dirs());
+	if (str && !ft_isalpha(str[0]))
+	{
+		printf("bash: export: `%s': not a valid identifier\n", str);
+		return (1);
+	}
+	while (str != NULL && str[i])
+	{
+		if (str[i] == '=')
+			return (0);
+		if (ft_isalnum(str[i]) || str[i] == '_')
+			i++;
+		else
+		{
+			printf("bash: export: `%s': not a valid identifier\n", str);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+int	do_export(t_master *master, char *in)
+{
+	int		i;
+	char	*name;
+
+	i = 0;
+	in = remove_if_even(in, '\"');
+	in = remove_if_even(in, '\'');
+	name = get_name(in);
+	if ((ft_strchr(in, '=')) == NULL)
+		i = ft_export(master, name, NULL);
+	else
+	{
+		if (ft_strlen(ft_strchr(in, '=')) <= 1)
+			i = ft_export(master, name, NULL);
+		else
+			i = ft_export(master, name, &(ft_strchr(in, '=')[1]));
+	}
+	return (i);
+}
+
 int	filter_export(t_master *master)
 {
 	char	**in;
-	char	*name;
 
 	in = master->in;
 	if (ft_count_matriz(in) <= 1)
@@ -48,18 +147,9 @@ int	filter_export(t_master *master)
 	{
 		while (*(++in))
 		{
-			*in = remove_if_even(*in, '\"');
-			*in = remove_if_even(*in, '\'');
-			name = get_name(*in);
-			if ((ft_strchr(*in, '=')) == NULL)
-				ft_export(master, name, NULL);
-			else
-			{
-				if (ft_strlen(ft_strchr(*in, '=')) <= 1)
-					ft_export(master, name, NULL);
-				else
-					ft_export(master, name, &(ft_strchr(*in, '=')[1]));
-			}
+			if (check_identifiers(*in))
+				return (1);
+			do_export(master, *in);
 		}
 	}
 	return (0);

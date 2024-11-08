@@ -27,7 +27,7 @@ MK = mkdir -p
 
 FILES = extra.c built_ins.c main.c\
 	read_bin.c echo.c free.c exit.c unset.c\
-	env.c export.c
+	env.c export.c dir_errors.c
 SRC = $(addprefix $(DIR)/, $(FILES))
 SRC_OBJ = $(addprefix $(DIR_OBJ)/, $(FILES:.c=.o))
 
@@ -67,7 +67,7 @@ push: fclean
 aquissan:
 	clear;
 	git branch;
-	git checkout master && git branch && git merge $@;
+	git checkout main && git branch && git merge $@;
 	git checkout $@;
 	git branch;
 
@@ -82,4 +82,4 @@ pusha:  fclean
 	clear;
 	git branch;
 	git status && git add . && git status && git commit -m"in proccess"
-	git push git@vogsphere.42luanda.com:vogsphere/intra-uuid-39b3881f-4033-4912-a22e-7a26c343ffc0-6135997-aquissan;
+	git push git@github.com:angelomario/minishell.git;
