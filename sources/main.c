@@ -111,27 +111,19 @@ int	wait_prompt(t_master *master)
 
 int	do_pipe(t_master *master)
 {
-	char	**in;
-
 	rm_void(master->in);
 	if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
 				'|') >= ft_count_matriz(master->in)))
 	{
 		if (wait_prompt(master))
 		{
-			printf("bash: syntax error near unexpected token `|'");
-			return (1);
+			return (printf("bash: syntax error near unexpected token `|'\n"), 1);
 		}
 		if (!its_ok(master->imput))
 			return (printf("Error\n"), 1);
 		wait_prompt(master);
 	}
-	in = master->in;
-	while (*in)
-	{
-		printf("%s\n", *in);
-		in++;
-	}
+	ft_pipe(master);
 	return (0);
 }
 
@@ -183,28 +175,34 @@ int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
 
-	(void)ac;
-	(void)av;
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
 	env = master->environ;
-	while (1)
+	while (1 && av && ac)
 	{
-		master->imput = readline("\033[32mminishell% \033[0m");
+		master->imput = readline("minishell% ");
 		if (!master->imput)
 			break ;
-		master->in = ft_split(master->imput, '|');
-		if (!its_ok(master->imput))
-			printf("ERROR\n");
+		if (its_ok(master->imput))
+		{
+			master->in = ft_split(master->imput, '|');
+			if (ft_count_matriz(master->in) >= 2)
+				do_pipe(master);
+			else
+			{
+				free_matriz(master->in);
+				master->in = ft_split(master->imput, ' ');
+				if (master->in && master->in[0])
+				{
+					if (fork() == 0)
+						ft_bin(master->in);
+					else
+						wait(NULL);
+				}
+			}
+		}
 		else
-			do_pipe(master);
-		// if (master->in && master->in[0])
-		// {
-		// 	if (fork() == 0)
-		// 		ft_bin(master->in);
-		// 	else
-		// 		wait(NULL);
-		// }
+			printf("ERROR\n");
 		add_history(master->imput);
 	}
 	free(master->imput);

@@ -42,7 +42,7 @@ int	list_dirs(void)
 	struct stat		info;
 	DIR				*dir;
 
-	dir = opendir("./*");
+	dir = opendir(".");
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name,
