@@ -25,6 +25,7 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
+# include <stdio.h>
 
 typedef struct s_master
 {
@@ -59,4 +60,8 @@ char		*remove_if_even(char *str, char ch);
 void		ft_concert_env(t_master *master);
 int			validpipe(char *str);
 int			its_ok(char *str);
+char		**ft_strsplit(char *s, char *delimiter);
+int			ft_heredoc(t_master *master);
+void		rm_void(char **mat);
+int			ft_pipe(t_master *master);
 #endif
