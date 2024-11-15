@@ -121,7 +121,6 @@ int	do_pipe(t_master *master)
 		}
 		if (!its_ok(master->imput))
 			return (printf("Error\n"), 1);
-		wait_prompt(master);
 	}
 	ft_pipe(master);
 	return (0);
@@ -186,7 +185,7 @@ int	main(int ac, char **av, char **env)
 		if (its_ok(master->imput))
 		{
 			master->in = ft_split(master->imput, '|');
-			if (ft_count_matriz(master->in) >= 2)
+			if (ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, '|'))
 				do_pipe(master);
 			else
 			{
