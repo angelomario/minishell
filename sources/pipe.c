@@ -12,12 +12,51 @@
 
 #include "minishell.h"
 
-int	ft_pipe(t_master *master)
+int	cur_instruction(t_master *master, int pipefd[2], int input_fd)
 {
 	char	**tmp;
-	int		pipefd[2];
-	int		input_fd;
-	int		pid;
+
+	if (input_fd != STDIN_FILENO)
+	{
+		if (dup2(input_fd, STDIN_FILENO) == -1)
+		{
+			perror("Dup2 input error");
+			exit(1);
+		}
+		close(input_fd);
+	}
+	if (*(master->in + 1) != NULL)
+	{
+		close(pipefd[0]);
+		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+		{
+			perror("Dup2 output error");
+			exit(1);
+		}
+		close(pipefd[1]);
+	}
+	tmp = ft_split(*(master->in), ' ');
+	ft_bin(tmp);
+	return (free(tmp), exit(0), 0);
+}
+
+int	reset_fd(t_master *master, int pipefd[2], int *input_fd)
+{
+	if (*input_fd != STDIN_FILENO)
+		close(*input_fd);
+	if (*(master->in + 1) != NULL)
+	{
+		close(pipefd[1]);
+		*input_fd = pipefd[0];
+	}
+	return (0);
+}
+
+int	ft_pipe(t_master *master)
+{
+	int	pipefd[2];
+	int	input_fd;
+	int	pid;
 
 	input_fd = STDIN_FILENO;
 	while (*(master->in) != NULL)
@@ -29,41 +68,11 @@ int	ft_pipe(t_master *master)
 		if (pid == -1)
 			return (perror("Fork error"), -1);
 		if (pid == 0)
-		{
-			if (input_fd != STDIN_FILENO)
-			{
-				if (dup2(input_fd, STDIN_FILENO) == -1)
-				{
-					perror("Dup2 input error");
-					exit(1);
-				}
-				close(input_fd);
-			}
-			if (*(master->in + 1) != NULL)
-			{
-				close(pipefd[0]);
-				if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-				{
-					perror("Dup2 output error");
-					exit(1);
-				}
-				close(pipefd[1]);
-			}
-			tmp = ft_split(*(master->in), ' ');
-			ft_bin(tmp);
-			free(tmp);
-			exit(0);
-		}
+			cur_instruction(master, pipefd, input_fd);
 		else
 		{
 			waitpid(pid, NULL, 0);
-			if (input_fd != STDIN_FILENO)
-				close(input_fd);
-			if (*(master->in + 1) != NULL)
-			{
-				close(pipefd[1]);
-				input_fd = pipefd[0];
-			}
+			reset_fd(master, pipefd, &input_fd);
 			master->in++;
 		}
 	}
