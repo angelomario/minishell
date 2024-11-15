@@ -29,14 +29,12 @@ int	cur_instruction(t_master *master, int pipefd[2], int input_fd)
 	{
 		close(pipefd[0]);
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-		{
-			perror("Dup2 output error");
-			exit(1);
-		}
+			return(perror("Dup2 output error"), exit(1), -1);
 		close(pipefd[1]);
 	}
 	tmp = ft_split(*(master->in), ' ');
-	ft_bin(tmp);
+	if (!ft_cmd_built_ins(master, tmp))
+		ft_bin(tmp);
 	return (free(tmp), exit(0), 0);
 }
 
