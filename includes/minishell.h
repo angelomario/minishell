@@ -15,9 +15,11 @@
 
 # include "../libft/libft.h"
 # include <dirent.h>
+# include <fcntl.h>
 # include <malloc.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
@@ -25,7 +27,6 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-# include <stdio.h>
 
 typedef struct s_master
 {
@@ -35,6 +36,8 @@ typedef struct s_master
 	char	**history;
 	char	**environ;
 	char	***cmd;
+	int		status;
+	pid_t	pid_child;
 }			t_master;
 
 // char	**ft_split(char const *s, char c);
@@ -61,7 +64,14 @@ void		ft_concert_env(t_master *master);
 int			validpipe(char *str);
 int			its_ok(char *str);
 char		**ft_strsplit(char *s, char *delimiter);
-int			ft_heredoc(t_master *master);
+int			heredoc(t_master *master, char **in);
 void		rm_void(char **mat);
 int			ft_pipe(t_master *master);
+int			ft_cd(t_master *master, char **in);
+int			ft_pwd(t_master *master, char **in);
+void		sigquit_handler(int sig);
+void		sigint_handler(int sig);
+int			ft_redirect(t_master *master, char *str);
+char		**parsedel(char *imput);
+int			ft_heredoc(char *del);
 #endif

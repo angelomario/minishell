@@ -170,39 +170,75 @@ int	its_ok(char *str)
 	return (validpipe(str));
 }
 
+int	is_built_in(t_master *master, char **in)
+{
+	if (ft_strcmp(in[0], "export") == 0)
+		return ((master->status = filter_export(master)), 1);
+	else if (ft_strcmp(in[0], "env") == 0)
+		return ((master->status = ft_env(master)), 1);
+	else if (ft_strcmp(in[0], "unset") == 0)
+		return ((master->status = ft_unset(master, in)), 1);
+	else if (ft_strcmp(in[0], "cd") == 0)
+		return ((master->status = ft_cd(master, in)), 1);
+	else if (ft_strcmp(in[0], "pwd") == 0)
+		return ((master->status = ft_pwd(master, in)), 1);
+	else if (ft_strcmp(in[0], "exit") == 0)
+		return (ft_exit(master), 1);
+	return (0);
+}
+
+int	only_comands(t_master *master)
+{
+	if (heredoc(master, ft_strsplit(master->imput, "<<")))
+	{
+		free_matriz(master->in);
+		master->in = ft_split(master->imput, ' ');
+		if (master->in && master->in[0])
+		{
+			if (is_built_in(master, master->in))
+				return (1);
+			if ((master->pid_child = fork()) == 0)
+				ft_bin(master->in);
+			else
+				waitpid(master->pid_child, &master->status, 0);
+		}
+		// printf("%d\n", master->status);
+	}
+	return (0);
+}
+
+
+
 int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
 
+	// signal(SIGINT, sigint_handler);
+    // signal(SIGQUIT, sigquit_handler);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
 	env = master->environ;
+	master->status = 0;
 	while (1 && av && ac)
 	{
 		master->imput = readline("minishell% ");
-		if (!master->imput)
-			break ;
-		if (its_ok(master->imput))
-		{
-			master->in = ft_split(master->imput, '|');
-			if (ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, '|'))
-				do_pipe(master);
-			else
-			{
-				free_matriz(master->in);
-				master->in = ft_split(master->imput, ' ');
-				if (master->in && master->in[0])
-				{
-					if (fork() == 0)
-						ft_bin(master->in);
-					else
-						wait(NULL);
-				}
-			}
-		}
-		else
-			printf("ERROR\n");
+		ft_redirect(master, master->imput);
+		// if (!master->imput)
+		// {
+		// 	printf("Chegou\n");
+		// 	break ;
+		// }
+		// if (its_ok(master->imput))
+		// {
+		// 	master->in = ft_split(master->imput, '|');
+		// 	if (ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, '|'))
+		// 		do_pipe(master);
+		// 	else
+		// 		only_comands(master);
+		// }
+		// else
+		// 	printf("ERROR\n");
 		add_history(master->imput);
 	}
-	free(master->imput);
+	return (free(master->imput), 0);
 }

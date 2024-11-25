@@ -97,21 +97,6 @@ int	ft_countrp(char *str, char *to_find)
 	return (j);
 }
 
-// char	***ft_parse(t_master *master)
-// {
-// 	int	i;
-// 	char	*tmp;
-
-// 	i = -1;
-// 	imput = master->imput;
-
-// 	while (master->imput[++i])
-// 	{
-// 		tmp[i] = master->imput[i];
-// 	}
-
-// }
-
 char	*ft_slice(char *str, char ch)
 {
 	int		i;

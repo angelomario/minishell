@@ -61,15 +61,15 @@ int	ft_pipe(t_master *master)
 	{
 		if (*(master->in + 1) != NULL)
 			if (pipe(pipefd) == -1)
-				return (perror("Pipe error"), -1);
+				return (perror("Pipe"), -1);
 		pid = fork();
 		if (pid == -1)
-			return (perror("Fork error"), -1);
+			return (perror("Fork"), -1);
 		if (pid == 0)
 			cur_instruction(master, pipefd, input_fd);
 		else
 		{
-			waitpid(pid, NULL, 0);
+			waitpid(pid, &master->status, 0);
 			reset_fd(master, pipefd, &input_fd);
 			master->in++;
 		}

@@ -28,7 +28,8 @@ MK = mkdir -p
 FILES = extra.c built_ins.c main.c\
 	read_bin.c echo.c free.c exit.c unset.c\
 	env.c export.c dir_errors.c heredoc.c strsplit.c\
-	pipe.c
+	pipe.c pwd.c cd.c signals.c redirect.c parse.c\
+	heredoc2.c
 SRC = $(addprefix $(DIR)/, $(FILES))
 SRC_OBJ = $(addprefix $(DIR_OBJ)/, $(FILES:.c=.o))
 
@@ -45,7 +46,7 @@ $(DIR_OBJ)/%.o: $(DIR)/%.c
 	@$(MK) $(DIR_OBJ)
 	@$(CC) -I$(INCLUDES) $(CFLAGS) -L$(DIR_LIB) -lft -c $< -o $@
 
-run: $(NAME)
+run: re $(NAME)
 	@clear
 	@./$(NAME)
 
