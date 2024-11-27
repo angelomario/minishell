@@ -37,37 +37,13 @@
 // 	return (0);
 // }
 
-char	*get_1word(char *in)
-{
-	char	*tmp;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	if (in)
-	{
-		while ((in[i] == ' ' || in[i] == '\t') && in[i])
-			i++;
-		tmp = (char *)malloc((ft_strlen(&in[i]) + 1) * sizeof(char));
-		while ((in[i] != ' ' && in[i] != '\t') && in[i])
-			tmp[j++] = in[i++];
-		tmp[j] = '\0';
-		return (tmp);
-	}
-	return (in);
-}
-
 int	redir_input(char *filename)
 {
 	int	fd;
 
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
-	{
-		perror("bash");
 		return (-1);
-	}
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("Dup2");
@@ -115,7 +91,10 @@ int	configure(char **in)
 		else if (ft_strcmp(in[i], ">>") == 0 && in[i + 1] != NULL)
 			redir_output(in[++i], 1);
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
-			redir_input(in[++i]);
+		{
+			if (redir_input(in[++i]) == -1)
+				return (-1);
+		}
 		else
 			i++;
 	}
@@ -164,12 +143,17 @@ int	do_redirect(t_master *master, char **in)
 	if (master->pid_child == 0)
 	{
 		// do_heredoc(in);
-		configure(in);
+		if (configure(in) == -1)
+		{
+			dup2(master->stdout_fd, STDOUT_FILENO);
+			printf("bash: %s: No such file or directory\n", in[0]);
+			return (-1);
+		}
 		format_imput(&in[0], 127);
 		in[0] = expanded(master, in[0]);
 		command = ft_split(in[0], 127);
-		if (is_built_in(master, command) == 42 && ((!is_redirect(in[0])
-			|| (ft_count_matriz(in) < 2))))
+		if (is_built_in(master, command) == 42 && (!is_redirect(in[0])
+			|| (ft_count_matriz(in) < 2)))
 		{
 			ft_bin(master, command);
 		}
@@ -201,7 +185,8 @@ int	ft_redirect(t_master *master, char *str)
 	rm_void(in);
 	if (there_is_redirect(in))
 	{
-		do_redirect(master, in);
+		if (do_redirect(master, in) == -1)
+			return (-1);
 	}
 	else
 	{

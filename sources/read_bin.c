@@ -122,8 +122,7 @@ void	ft_current_dir(t_master *master, char **av)
 	ft_strcat(path, cmd);
 	if (execv(path, av) == -1)
 	{
-		dup2(master->stdout_fd, STDOUT_FILENO);
-		printf("command not found: %s\n", av[0]);
+		print_default_fd(master, ft_strjoin("command not found: ", av[0]));
 		free(path);
 		free(get);
 		return ;
@@ -132,17 +131,20 @@ void	ft_current_dir(t_master *master, char **av)
 
 int	built_in_path(char *cmd_new)
 {
-	if (ft_strcmp(ft_strstr(cmd_new, "env"), "env") == 0)
+	int	len_path;
+
+	len_path = ft_strlen(cmd_new);
+	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("env")]), "env") == 0)
 		return (1);
-	if (ft_strcmp(ft_strstr(cmd_new, "export"), "export") == 0)
+	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("export")]), "export") == 0)
 		return (1);
-	if (ft_strcmp(ft_strstr(cmd_new, "echo"), "echo") == 0)
+	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("echo")]), "echo") == 0)
 		return (1);
-	if (ft_strcmp(ft_strstr(cmd_new, "cd"), "cd") == 0)
+	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("cd")]), "cd") == 0)
 		return (1);
-	if (ft_strcmp(ft_strstr(cmd_new, "pwd"), "pwd") == 0)
+	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("pwd")]), "pwd") == 0)
 		return (1);
-	if (ft_strcmp(ft_strstr(cmd_new, "unset"), "unset") == 0)
+	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("unset")]), "unset") == 0)
 		return (1);
 	return (0);
 }
