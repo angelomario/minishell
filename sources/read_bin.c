@@ -108,7 +108,7 @@ void	ft_current_dir(t_master *master, char **av)
 {
 	char	*cmd;
 	char	*path;
-	char *get;
+	char	*get;
 	int		len;
 	int		cwd;
 
@@ -130,6 +130,23 @@ void	ft_current_dir(t_master *master, char **av)
 	}
 }
 
+int	built_in_path(char *cmd_new)
+{
+	if (ft_strcmp(ft_strstr(cmd_new, "env"), "env") == 0)
+		return (1);
+	if (ft_strcmp(ft_strstr(cmd_new, "export"), "export") == 0)
+		return (1);
+	if (ft_strcmp(ft_strstr(cmd_new, "echo"), "echo") == 0)
+		return (1);
+	if (ft_strcmp(ft_strstr(cmd_new, "cd"), "cd") == 0)
+		return (1);
+	if (ft_strcmp(ft_strstr(cmd_new, "pwd"), "pwd") == 0)
+		return (1);
+	if (ft_strcmp(ft_strstr(cmd_new, "unset"), "unset") == 0)
+		return (1);
+	return (0);
+}
+
 int	ft_bin_(char **av, char *path)
 {
 	char	*cmd_new;
@@ -138,7 +155,12 @@ int	ft_bin_(char **av, char *path)
 	if (!cmd_new)
 		return (-1);
 	ft_strcpy(cmd_new, path);
-	ft_strcat(cmd_new, av[0]);
+	ft_strcat(cmd_new, ft_strstr(cmd_new, av[0]));
+	if (built_in_path(cmd_new))
+	{
+		free(cmd_new);
+		return (-1);
+	}
 	if (execv(cmd_new, av) != 0)
 	{
 		free(cmd_new);
@@ -155,8 +177,7 @@ void	ft_bin(t_master *master, char **av)
 	int		i;
 
 	i = 0;
-	path = getenv("PATH");
-	(void)master;
+	path = ft_getenv(master->environ, "PATH");
 	paths = ft_split(path, ':');
 	while (paths[i])
 	{
