@@ -12,16 +12,16 @@ char	*ft_strstr(char *s1, char *s2)
 	return (&s2[i]);
 }
 
-int	ft_cmd_built_ins(t_master *master, char **av)
-{
-	int	i;
+// int	ft_cmd_built_ins(t_master *master)
+// {
+// 	int	i;
 
-	i = 0;
-	i += ft_builting(av);
-	i += ft_echo(av);
-	i += ft_env(master);
-	return (i);
-}
+// 	i = 0;
+// 	i += ft_pwd(master, master->in);
+// 	i += ft_echo(master->in);
+// 	i += ft_env(master);
+// 	return (i);
+// }
 
 void	*ft_realloc(void *ptr, size_t new_size)
 {

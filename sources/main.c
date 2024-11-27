@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:07:25 by joandre           #+#    #+#             */
-/*   Updated: 2024/10/23 06:13:25 by joandre          ###   ########.fr       */
+/*   Updated: 2024/11/26 07:16:20 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 // 		else if (master->in && master->in[0])
 // 		{
 // 			if (fork() == 0)
-// 				ft_bin(master->in);
+// 				ft_bin(master, master->in);
 // 			else
 // 				wait(NULL);
 // 		}
@@ -72,6 +72,7 @@ void	rm_void(char **mat)
 	while (mat[++i])
 	{
 		j = 0;
+		trim_whitespace(mat[i]);
 		while (mat[i][j] == ' ' || mat[i][j] == '\t')
 			j++;
 		if (mat[i][j] == '\0')
@@ -83,7 +84,6 @@ void	rm_void(char **mat)
 			}
 			mat[i] = NULL;
 			free(mat[i + 1]);
-			return ;
 		}
 	}
 }
@@ -117,7 +117,8 @@ int	do_pipe(t_master *master)
 	{
 		if (wait_prompt(master))
 		{
-			return (printf("bash: syntax error near unexpected token `|'\n"), 1);
+			return (printf("bash: syntax error near unexpected token `|'\n"),
+				1);
 		}
 		if (!its_ok(master->imput))
 			return (printf("Error\n"), 1);
@@ -173,72 +174,83 @@ int	its_ok(char *str)
 int	is_built_in(t_master *master, char **in)
 {
 	if (ft_strcmp(in[0], "export") == 0)
-		return ((master->status = filter_export(master)), 1);
+		return ((master->status = filter_export(master)));
 	else if (ft_strcmp(in[0], "env") == 0)
-		return ((master->status = ft_env(master)), 1);
+		return ((master->status = ft_env(master)));
 	else if (ft_strcmp(in[0], "unset") == 0)
-		return ((master->status = ft_unset(master, in)), 1);
+		return ((master->status = ft_unset(master, in)));
 	else if (ft_strcmp(in[0], "cd") == 0)
-		return ((master->status = ft_cd(master, in)), 1);
+		return ((master->status = ft_cd(master, in)));
 	else if (ft_strcmp(in[0], "pwd") == 0)
-		return ((master->status = ft_pwd(master, in)), 1);
+		return ((master->status = ft_pwd(master, in)));
+	else if (ft_strcmp(in[0], "echo") == 0)
+		return ((master->status = ft_echo(in)));
 	else if (ft_strcmp(in[0], "exit") == 0)
-		return (ft_exit(master), 1);
-	return (0);
+		return (ft_exit(master), 0);
+	return (42);
 }
 
-int	only_comands(t_master *master)
+int	only_comands(t_master *master, char *input)
 {
-	if (heredoc(master, ft_strsplit(master->imput, "<<")))
+	int	built_in;
+	char	*tmp;
+
+	free_matriz(master->in);
+	format_imput(&input, 127);
+	tmp = expanded(master, input);
+	master->in = ft_split(tmp, 127);
+	free(tmp);
+	built_in = 42;
+	if (master->in && master->in[0])
 	{
-		free_matriz(master->in);
-		master->in = ft_split(master->imput, ' ');
-		if (master->in && master->in[0])
+		built_in = is_built_in(master, master->in);
+		if (built_in == 42)
 		{
-			if (is_built_in(master, master->in))
-				return (1);
 			if ((master->pid_child = fork()) == 0)
-				ft_bin(master->in);
+				ft_bin(master, master->in);
 			else
 				waitpid(master->pid_child, &master->status, 0);
+
 		}
-		// printf("%d\n", master->status);
 	}
+	printf("%d\n", master->status);
 	return (0);
 }
-
-
 
 int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
 
 	// signal(SIGINT, sigint_handler);
-    // signal(SIGQUIT, sigquit_handler);
+	// signal(SIGQUIT, sigquit_handler);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
 	env = master->environ;
 	master->status = 0;
+	master->stdin_fd = dup(STDIN_FILENO);
+	master->stdout_fd = dup(STDOUT_FILENO);
 	while (1 && av && ac)
 	{
 		master->imput = readline("minishell% ");
-		ft_redirect(master, master->imput);
-		// if (!master->imput)
-		// {
-		// 	printf("Chegou\n");
-		// 	break ;
-		// }
-		// if (its_ok(master->imput))
-		// {
-		// 	master->in = ft_split(master->imput, '|');
-		// 	if (ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, '|'))
-		// 		do_pipe(master);
-		// 	else
-		// 		only_comands(master);
-		// }
-		// else
-		// 	printf("ERROR\n");
-		add_history(master->imput);
+		master->history = ft_strdup(master->imput);
+		if (!master->imput)
+		{
+			printf("Chegou\n");
+			break ;
+		}
+		if (its_ok(master->imput))
+		{
+			master->in = ft_split(master->imput, '|');
+			if (ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
+					'|'))
+				do_pipe(master);
+			else
+				ft_redirect(master, master->imput);
+		}
+		else
+			printf("ERROR\n");
+		add_history(master->history);
+		// free_matriz(master->in);
 	}
 	return (free(master->imput), 0);
 }

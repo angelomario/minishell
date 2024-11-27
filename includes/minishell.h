@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2024/10/23 05:42:52 by joandre          ###   ########.fr       */
+/*   Updated: 2024/11/26 07:22:56 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,38 @@
 
 typedef struct s_master
 {
-	pid_t	*pid;
+	pid_t	pid;
 	char	*imput;
 	char	**in;
-	char	**history;
+	char	*history;
 	char	**environ;
 	char	***cmd;
+	int		stdin_fd;
+	int		stdout_fd;
 	int		status;
 	pid_t	pid_child;
+	char	*output;
 }			t_master;
+
+typedef struct s_data
+{
+	int		i;
+	int		j;
+	int		len;
+	char	*imput;
+	int		q_duo;
+	int		q_s;
+}			t_data;
 
 // char	**ft_split(char const *s, char c);
 int			ft_builting(char **args);
-void		ft_bin(char **av);
 char		*ft_strstr(char *s1, char *s2);
 void		free_matriz(char **mat);
 
 // BUILT-INS
-int			ft_cmd_built_ins(t_master *master, char **av);
+int			ft_cmd_built_ins(t_master *master);
 int			ft_env(t_master *master);
-int			ft_echo(char **av);
+int			ft_echo(char **in);
 int			ft_unset(t_master *master, char **str);
 void		ft_exit(t_master *master);
 void		*ft_realloc(void *ptr, size_t new_size);
@@ -74,4 +86,14 @@ void		sigint_handler(int sig);
 int			ft_redirect(t_master *master, char *str);
 char		**parsedel(char *imput);
 int			ft_heredoc(char *del);
+void		format_imput(char **s, int n);
+char		*expanded(t_master *master, char *imput);
+int			ft_count_redir(char *s);
+char		*ft_format_in_redir(char *s, int i, int j, char c);
+void		trim_whitespace(char *str);
+int			is_built_in(t_master *master, char **in);
+void		ft_bin(t_master *master, char **av);
+char		*ft_getenv(char **env, char *name);
+int			print_default_fd(t_master *master, char *msg);
+int			is_redirect(char *str);
 #endif

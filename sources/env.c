@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 10:48:00 by aquissan          #+#    #+#             */
-/*   Updated: 2024/10/30 10:48:42 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/11/22 15:26:48 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,18 @@
 
 int	ft_env(t_master *master)
 {
-	char	**get;
+	char	**env;
 
-	if (master->in[0] != NULL && (strcmp(master->in[0], "env") == 0))
+	env = master->environ;
+	if (env && *env)
 	{
-		get = master->environ;
-		while (*get)
+		while (*env)
 		{
-			if (ft_strcmp(ft_strrchr(*get, '='), "=''") != 0)
-				printf("%s\n", *get);
-			get++;
+			if (ft_strcmp(ft_strrchr(*env, '='), "=''") != 0)
+				printf("%s\n", *env);
+			env++;
 		}
 		return (0);
 	}
-	return (0);
+	return (1);
 }

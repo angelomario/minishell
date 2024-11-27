@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 09:00:25 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/21 09:00:54 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/11/26 08:10:16 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,6 @@ int	redir_output(char *name, int append)
 		close(fd);
 		return (-1);
 	}
-	if (dup2(fd, STDERR_FILENO) < 0)
-	{
-		perror("Erro ao redirecionar stderr");
-		close(fd);
-		return (-1);
-	}
 	return (close(fd), 0);
 }
 
@@ -155,8 +149,8 @@ int	do_heredoc(char **in)
 	i = 0;
 	while (in[i])
 	{
-		if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
-			return (ft_heredoc(in[++i]));
+		// if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
+		// 	return (ft_heredoc(in[++i]));
 		i++;
 	}
 	return (1);
@@ -164,20 +158,20 @@ int	do_heredoc(char **in)
 
 int	do_redirect(t_master *master, char **in)
 {
-	int	i;
+	char	**command;
 
-	i = 0;
 	master->pid_child = fork();
 	if (master->pid_child == 0)
 	{
-		if (!in || ft_count_matriz(in) < 1)
-			return (0);
-		do_heredoc(in);
+		// do_heredoc(in);
 		configure(in);
-		while (in[i] != NULL)
+		format_imput(&in[0], 127);
+		in[0] = expanded(master, in[0]);
+		command = ft_split(in[0], 127);
+		if (is_built_in(master, command) == 42 && ((!is_redirect(in[0])
+			|| (ft_count_matriz(in) < 2))))
 		{
-			printf("%ld %s\n", ft_strlen(in[i]), in[i]);
-			i++;
+			ft_bin(master, command);
 		}
 		exit(0);
 	}
@@ -186,23 +180,44 @@ int	do_redirect(t_master *master, char **in)
 	return (0);
 }
 
+int	is_redirect(char *str)
+{
+	if (str)
+	{
+		if ((ft_strcmp(str, ">") == 0) || (ft_strcmp(str, ">>") == 0)
+			|| (ft_strcmp(str, "<") == 0))
+			return (1);
+	}
+	return (0);
+}
+
 int	ft_redirect(t_master *master, char *str)
 {
+	char	*tmp;
 	char	**in;
 
-	(void)master;
-	in = parsedel(str);
+	tmp = ft_format_in_redir(str, 0, 0, 127);
+	in = ft_split(tmp, 127);
+	rm_void(in);
 	if (there_is_redirect(in))
 	{
 		do_redirect(master, in);
 	}
 	else
 	{
-		master->pid_child = fork();
-		if (master->pid_child == 0)
-			ft_bin(ft_split(*in, ' '));
-		else
-			waitpid(master->pid_child, &master->status, 0);
+		free_matriz(in);
+		format_imput(&tmp, 127);
+		tmp = expanded(master, tmp);
+		in = ft_split(tmp, 127);
+		if ((is_built_in(master, in) == 42) && (!is_redirect(in[0])
+			|| (ft_count_matriz(in) < 2)))
+		{
+			master->pid = fork();
+			if (master->pid == 0)
+				ft_bin(master, in);
+			else
+				waitpid(master->pid, &master->status, 0);
+		}
 	}
 	return (0);
 }

@@ -54,7 +54,7 @@ int	father(t_master *master, int pipe_fd[2], int default_stdin, char **command)
 	// Aguarda o término do processo filho
 	waitpid(master->pid_child, &master->status, 0);
 	if ((master->pid_child = fork()) == 0)
-		ft_bin(command);
+		ft_bin(master, command);
 	else
 		waitpid(master->pid_child, NULL, 0);
 	// Após o término do heredoc, restaura o stdin original

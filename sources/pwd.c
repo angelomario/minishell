@@ -1,30 +1,21 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 08:47:46 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/19 08:48:49 by aquissan         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 int	ft_pwd(t_master *master, char **in)
 {
-	(void)master;
-	if (in && *in)
+	char *cwd;
+
+	cwd = getcwd(NULL, 0);
+	if (ft_strcmp(in[0], "pwd") == 0)
 	{
-		if (ft_strcmp(in[0], "pwd") == 0)
+		if (ft_strcmp(in[0], "pwd") == 0 && in[1])
+			print_default_fd(master, ft_strdup("pwd: too many arguments"));
+		else
 		{
-			if (ft_count_matriz(in) >= 2)
-				printf("pwd: too many arguments\n");
-			else
-				printf("%s\n", getcwd(NULL, 0));
+			printf("%s\n", cwd);
+			free(cwd);
 			return (1);
 		}
 	}
+	free(cwd);
 	return (0);
 }
