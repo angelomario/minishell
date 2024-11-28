@@ -40,7 +40,8 @@
 int	redir_input(char *filename)
 {
 	int	fd;
-
+	if (!filename)
+		return (-1);
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		return (-1);
@@ -77,7 +78,7 @@ int	redir_output(char *name, int append)
 	return (close(fd), 0);
 }
 
-int	configure(char **in)
+int	configure(t_master *master, char **in)
 {
 	int	i;
 
@@ -93,7 +94,11 @@ int	configure(char **in)
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
 		{
 			if (redir_input(in[++i]) == -1)
-				return (-1);
+			{
+				return (print_default_fd(master, ft_strdup("bash: ")),
+					print_default_fd(master, in[i]), print_default_fd(master,
+						ft_strdup(": No such file or directory\n")), -1);
+			}
 		}
 		else
 			i++;
@@ -116,6 +121,8 @@ int	there_is_redirect(char **in)
 			there_is = 1;
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
 			there_is = 1;
+		else if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
+			there_is = 1;
 		i++;
 	}
 	return (there_is);
@@ -128,8 +135,8 @@ int	do_heredoc(char **in)
 	i = 0;
 	while (in[i])
 	{
-		// if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
-		// 	return (ft_heredoc(in[++i]));
+		if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
+			return (ft_heredoc(in[++i]));
 		i++;
 	}
 	return (1);
@@ -142,18 +149,14 @@ int	do_redirect(t_master *master, char **in)
 	master->pid_child = fork();
 	if (master->pid_child == 0)
 	{
-		// do_heredoc(in);
-		if (configure(in) == -1)
-		{
-			dup2(master->stdout_fd, STDOUT_FILENO);
-			printf("bash: %s: No such file or directory\n", in[0]);
+		do_heredoc(in);
+		if (configure(master, in) == -1)
 			return (-1);
-		}
 		format_imput(&in[0], 127);
 		in[0] = expanded(master, in[0]);
 		command = ft_split(in[0], 127);
 		if (is_built_in(master, command) == 42 && (!is_redirect(in[0])
-			|| (ft_count_matriz(in) < 2)))
+				|| (ft_count_matriz(in) < 2)))
 		{
 			ft_bin(master, command);
 		}
@@ -169,7 +172,7 @@ int	is_redirect(char *str)
 	if (str)
 	{
 		if ((ft_strcmp(str, ">") == 0) || (ft_strcmp(str, ">>") == 0)
-			|| (ft_strcmp(str, "<") == 0))
+			|| (ft_strcmp(str, "<") == 0) || (ft_strcmp(str, "<<") == 0))
 			return (1);
 	}
 	return (0);
@@ -195,7 +198,7 @@ int	ft_redirect(t_master *master, char *str)
 		tmp = expanded(master, tmp);
 		in = ft_split(tmp, 127);
 		if ((is_built_in(master, in) == 42) && (!is_redirect(in[0])
-			|| (ft_count_matriz(in) < 2)))
+				|| (ft_count_matriz(in) < 2)))
 		{
 			master->pid = fork();
 			if (master->pid == 0)

@@ -88,7 +88,7 @@ int	list_dirs(void)
 // 	return (closedir(dir));
 // }
 
-int	check_identifiers(char *str)
+int	check_identifiers(t_master *master, char *str)
 {
 	int	i;
 
@@ -97,8 +97,9 @@ int	check_identifiers(char *str)
 		return (list_dirs());
 	if (str && !ft_isalpha(str[0]))
 	{
-		printf("bash: export: `%s': not a valid identifier\n", str);
-		return (1);
+		return (print_default_fd(master, ft_strdup("bash: export: `")),
+			print_default_fd(master, str), print_default_fd(master,
+				ft_strdup("': not a valid identifier\n")), 1);
 	}
 	while (str != NULL && str[i])
 	{
@@ -108,8 +109,9 @@ int	check_identifiers(char *str)
 			i++;
 		else
 		{
-			printf("bash: export: `%s': not a valid identifier\n", str);
-			return (1);
+			return (print_default_fd(master, ft_strdup("bash: export: `")),
+				print_default_fd(master, str), print_default_fd(master,
+					ft_strdup("': not a valid identifier\n")), 1);
 		}
 	}
 	return (0);
@@ -124,6 +126,7 @@ int	do_export(t_master *master, char *in)
 	in = remove_if_even(in, '\"');
 	in = remove_if_even(in, '\'');
 	name = get_name(in);
+	name = in;
 	if ((ft_strchr(in, '=')) == NULL)
 		i = ft_export(master, name, NULL);
 	else
@@ -136,19 +139,16 @@ int	do_export(t_master *master, char *in)
 	return (i);
 }
 
-int	filter_export(t_master *master)
+int	filter_export(t_master *master, char **in)
 {
-	char	**in;
-
-	in = master->in;
 	if (ft_count_matriz(in) <= 1)
 		ft_export(master, NULL, NULL);
 	else
 	{
 		while (*(++in))
 		{
-			if (check_identifiers(*in))
-				return (1);
+			if (check_identifiers(master, *in))
+				in++;
 			do_export(master, *in);
 		}
 	}
@@ -241,7 +241,7 @@ int	replace_env(t_master *master, char *name, char *value)
 		nlen = ft_strlen(name) - 1;
 	while (*env)
 	{
-		if (ft_strncmp(*env, name, nlen) == 0)
+		if ((ft_strncmp(*env, name, nlen) == 0) && (*env)[nlen] == '=')
 		{
 			if (value == NULL && ft_strchr(name, '='))
 			{

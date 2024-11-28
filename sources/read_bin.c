@@ -123,6 +123,7 @@ void	ft_current_dir(t_master *master, char **av)
 	if (execv(path, av) == -1)
 	{
 		print_default_fd(master, ft_strjoin("command not found: ", av[0]));
+		printf("\n");
 		free(path);
 		free(get);
 		return ;

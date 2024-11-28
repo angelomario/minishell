@@ -68,7 +68,7 @@ void		*ft_realloc(void *ptr, size_t new_size);
 int			ft_export(t_master *master, char *name, char *value);
 char		**ft_arrdup(char **environ);
 int			ft_count_matriz(char **mat);
-int			filter_export(t_master *master);
+int			filter_export(t_master *master, char **in);
 void		ft_arrtab(char **arr);
 char		*ft_slice(char *str, char ch);
 char		*remove_if_even(char *str, char ch);
@@ -96,4 +96,5 @@ void		ft_bin(t_master *master, char **av);
 char		*ft_getenv(char **env, char *name);
 int			print_default_fd(t_master *master, char *msg);
 int			is_redirect(char *str);
+void		ft_setenv(t_master *master, char *name_var, char *new_value);
 #endif

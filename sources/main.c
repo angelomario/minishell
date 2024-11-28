@@ -12,41 +12,6 @@
 
 #include "minishell.h"
 
-// int	main(int ac, char **av, char **env)
-// {
-// 	t_master	*master;
-
-// 	(void)ac;
-// 	(void)av;
-// 	master = (t_master *)malloc(sizeof(t_master));
-// 	master->environ = ft_arrdup(env);
-// 	env = master->environ;
-// 	while (1)
-// 	{
-// 		master->imput = readline("\033[32mminishell% \033[0m");
-// 		if (!master->imput)
-// 			break ;
-// 		master->in = ft_split(master->imput, ' ');
-// 		if (ft_strcmp(master->in[0], "exit") == 0)
-// 			ft_exit(master);
-// 		if (ft_strcmp(master->in[0], "unset") == 0)
-// 			ft_unset(master, &master->in[1]);
-// 		else if (ft_strcmp(master->in[0], "env") == 0)
-// 			ft_env(master);
-// 		else if (ft_strcmp(master->in[0], "export") == 0)
-// 			filter_export(master);
-// 		else if (master->in && master->in[0])
-// 		{
-// 			if (fork() == 0)
-// 				ft_bin(master, master->in);
-// 			else
-// 				wait(NULL);
-// 		}
-// 		add_history(master->imput);
-// 	}
-// 	free(master->imput);
-// }
-
 int	ft_countchar(char *str, char ch)
 {
 	int	i;
@@ -174,7 +139,7 @@ int	its_ok(char *str)
 int	is_built_in(t_master *master, char **in)
 {
 	if (ft_strcmp(in[0], "export") == 0)
-		return ((master->status = filter_export(master)));
+		return ((master->status = filter_export(master, in)));
 	else if (ft_strcmp(in[0], "env") == 0)
 		return ((master->status = ft_env(master)));
 	else if (ft_strcmp(in[0], "unset") == 0)
@@ -192,7 +157,7 @@ int	is_built_in(t_master *master, char **in)
 
 int	only_comands(t_master *master, char *input)
 {
-	int	built_in;
+	int		built_in;
 	char	*tmp;
 
 	free_matriz(master->in);
@@ -210,7 +175,6 @@ int	only_comands(t_master *master, char *input)
 				ft_bin(master, master->in);
 			else
 				waitpid(master->pid_child, &master->status, 0);
-
 		}
 	}
 	printf("%d\n", master->status);
@@ -245,7 +209,10 @@ int	main(int ac, char **av, char **env)
 					'|'))
 				do_pipe(master);
 			else
-				ft_redirect(master, master->imput);
+			{
+				if (ft_redirect(master, master->imput) == -1)
+					break ;
+			}
 		}
 		else
 			printf("ERROR\n");
