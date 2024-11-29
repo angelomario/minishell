@@ -64,11 +64,17 @@
 // 	return (1);
 // }
 
-int	child(char *del, int pipe_fd[2])
+int	child(t_master *master, char *del, int pipe_fd[2])
 {
 	char	*input;
 
 	close(pipe_fd[0]);
+	if ((dup2(master->stdin_fd, STDIN_FILENO) == -1) || (dup2(master->stdout_fd,
+				STDOUT_FILENO) == -1))
+	{
+		print_default_fd(master,
+			ft_strdup("Erro ao restaurar as saidas padrao\n"));
+	}
 	input = readline("heredoc> ");
 	while (1)
 	{
@@ -84,16 +90,17 @@ int	child(char *del, int pipe_fd[2])
 	return (0);
 }
 
-int	ft_heredoc(char *del)
+int	ft_heredoc(t_master *master, char *del)
 {
-	int	pipe_fd[2];
+	int		pipe_fd[2];
 	pid_t	pid;
+
 	if (pipe(pipe_fd) == -1)
 		return (perror("Pipe"), -1);
 	pid = fork();
 	if (pid == 0)
 	{
-		exit(child(del, pipe_fd));
+		exit(child(master, del, pipe_fd));
 	}
 	else
 	{

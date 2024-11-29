@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2024/11/26 07:22:56 by joandre          ###   ########.fr       */
+/*   Updated: 2024/11/29 08:42:11 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void		sigquit_handler(int sig);
 void		sigint_handler(int sig);
 int			ft_redirect(t_master *master, char *str);
 char		**parsedel(char *imput);
-int			ft_heredoc(char *del);
+int			ft_heredoc(t_master *master, char *del);
 void		format_imput(char **s, int n);
 char		*expanded(t_master *master, char *imput);
 int			ft_count_redir(char *s);
@@ -97,4 +97,6 @@ char		*ft_getenv(char **env, char *name);
 int			print_default_fd(t_master *master, char *msg);
 int			is_redirect(char *str);
 void		ft_setenv(t_master *master, char *name_var, char *new_value);
+int			ft_count_redir(char *s);
+int			is_redirect(char *str);
 #endif

@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:07:25 by joandre           #+#    #+#             */
-/*   Updated: 2024/11/26 07:16:20 by joandre          ###   ########.fr       */
+/*   Updated: 2024/11/29 09:10:52 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,25 +113,21 @@ int	validpipe(char *str)
 
 int	its_ok(char *str)
 {
-	int	i;
-	int	asp;
+	int		i;
+	t_data	data;
 
 	i = 0;
-	asp = 0;
+	data.q_duo = 0;
+	data.q_s = 0;
 	while (str[i])
 	{
-		if (str[i] == '\"' || str[i] == '\'')
-		{
-			if (asp)
-				asp = 0;
-			else
-				asp = 1;
-		}
-		if ((str[i] == '>' || str[i] == '<' || str[i] == '|') && asp)
-			return (0);
+		if (str[i] == '"' && !data.q_s)
+			data.q_duo = !data.q_duo;
+		else if (str[i] == '\'' && !data.q_duo)
+			data.q_s = !data.q_s;
 		i++;
 	}
-	if (asp)
+	if (data.q_s || data.q_duo)
 		return (0);
 	return (validpipe(str));
 }
@@ -181,6 +177,20 @@ int	only_comands(t_master *master, char *input)
 	return (0);
 }
 
+int	ft_valid_args(char **in)
+{
+	int	i;
+
+	i = 0;
+	while (in[i])
+	{
+		if (its_ok(in[i]) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
@@ -205,8 +215,8 @@ int	main(int ac, char **av, char **env)
 		if (its_ok(master->imput))
 		{
 			master->in = ft_split(master->imput, '|');
-			if (ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
-					'|'))
+			if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
+					'|')) && ft_valid_args(master->in))
 				do_pipe(master);
 			else
 			{
@@ -215,7 +225,7 @@ int	main(int ac, char **av, char **env)
 			}
 		}
 		else
-			printf("ERROR\n");
+			printf("Aqui\n");
 		add_history(master->history);
 		// free_matriz(master->in);
 	}
