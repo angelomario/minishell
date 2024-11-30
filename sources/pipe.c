@@ -14,7 +14,6 @@
 
 int	cur_instruction(t_master *master, int pipefd[2], int input_fd, char **input)
 {
-	// char	**tmp;
 	if (input_fd != STDIN_FILENO)
 	{
 		if (dup2(input_fd, STDIN_FILENO) == -1)
@@ -32,10 +31,6 @@ int	cur_instruction(t_master *master, int pipefd[2], int input_fd, char **input)
 		close(pipefd[1]);
 	}
 	ft_redirect(master, *input);
-	// master->in = ft_split(*(master->in), ' ');
-	// if (!ft_cmd_built_ins(master))
-	// 	ft_bin(master, master->in);
-	// free_matriz(master->in);
 	return (exit(0), 0);
 }
 

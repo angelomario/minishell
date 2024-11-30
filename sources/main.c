@@ -58,9 +58,14 @@ int	wait_prompt(t_master *master)
 	char	*tmp;
 
 	tmp = readline("\033[32m> \033[0m");
+	if (!tmp)
+	{
+		exit(0);
+	}
 	master->imput = (char *)ft_realloc(master->imput, (ft_strlen(master->imput)
 				+ ft_strlen(tmp) + 1));
 	ft_strcat(master->imput, tmp);
+	add_history(master->imput);
 	free_matriz(master->in);
 	master->in = ft_split(master->imput, '|');
 	rm_void(master->in);
@@ -77,18 +82,30 @@ int	wait_prompt(t_master *master)
 int	do_pipe(t_master *master)
 {
 	rm_void(master->in);
-	if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
-				'|') >= ft_count_matriz(master->in)))
+	master->pid_child = fork();
+	if (master->pid_child == 0)
 	{
-		if (wait_prompt(master))
+		signal(SIGINT, exit_130);
+		if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
+					'|') >= ft_count_matriz(master->in)))
 		{
-			return (printf("bash: syntax error near unexpected token `|'\n"),
-				1);
+			if (wait_prompt(master))
+			{
+				return (printf("bash: syntax error near unexpected token `|'\n"),
+					1);
+			}
+			if (!its_ok(master->imput))
+				return (printf("Error\n"), 1);
 		}
-		if (!its_ok(master->imput))
-			return (printf("Error\n"), 1);
+		ft_pipe(master);
+		exit(0);
 	}
-	ft_pipe(master);
+	else
+	{
+		signal(SIGINT, SIG_IGN);
+		waitpid(master->pid_child, &master->status, 0);
+		signal(SIGINT, sigint_handler);
+	}
 	return (0);
 }
 
@@ -195,23 +212,30 @@ int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
 
-	// signal(SIGINT, sigint_handler);
-	// signal(SIGQUIT, sigquit_handler);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	// pid_address = (int *)malloc(sizeof(int) * 1);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
 	env = master->environ;
 	master->status = 0;
+	// pid_address = &master->pid_child;
 	master->stdin_fd = dup(STDIN_FILENO);
 	master->stdout_fd = dup(STDOUT_FILENO);
 	while (1 && av && ac)
 	{
+		g_func(0);
 		master->imput = readline("minishell% ");
-		master->history = ft_strdup(master->imput);
 		if (!master->imput)
 		{
-			printf("Chegou\n");
-			break ;
+			kill_proccess(master->pid_child, NULL, master->stdout_fd);
+			printf("exit\n");
+			exit(0);
 		}
+		master->history = ft_strdup(master->imput);
+		trim_whitespace(master->imput);
+		if (ft_strcmp(master->imput, "") == 0)
+			continue ;
 		if (its_ok(master->imput))
 		{
 			master->in = ft_split(master->imput, '|');
@@ -225,9 +249,9 @@ int	main(int ac, char **av, char **env)
 			}
 		}
 		else
-			printf("Aqui\n");
-		add_history(master->history);
+			printf("Error\n");
 		// free_matriz(master->in);
+		add_history(master->history);
 	}
 	return (free(master->imput), 0);
 }

@@ -12,14 +12,61 @@
 
 #include "minishell.h"
 
-void	sigint_handler(int sig)
+int	g_func(int n)
 {
-    (void)sig;
-	printf("\nRecebi SIGINT (Ctrl-C)! Continuando...\n");
+	static int	num = 0;
+
+	if (n >= 0)
+		num = n;
+	return (num);
 }
 
-void	sigquit_handler(int sig)
+void	exit_130(int sig)
 {
-    (void)sig;
-	printf("\nRecebi SIGQUIT (Ctrl-\\)! Saindo...\n");
+	if (sig == SIGINT)
+	{
+		write(1, "\n", 1);
+		exit(1);
+	}
+}
+
+void	sigint_handler(int sig)
+{
+	(void)sig;
+	if (g_func(-1) == 1)
+	{
+		write(1, "\n", 1);
+		exit(130);
+	}
+	if (g_func(-1) == 0)
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
+
+int	kill_proccess(int pid, char *del, int stdout)
+{
+	if (del && (stdout >= 0))
+	{
+		ft_putstr_fd("bash: warning: here-document at line 5 delimited by end-of-file (wanted `",
+			stdout);
+		ft_putstr_fd(del, stdout);
+		ft_putstr_fd("')\n", stdout);
+	}
+	if (pid > 0)
+	{
+		kill(pid, SIGKILL);
+		return (0);
+	}
+	return (-1);
+}
+
+void	breaker(int	sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
 }

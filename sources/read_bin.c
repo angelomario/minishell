@@ -126,7 +126,7 @@ void	ft_current_dir(t_master *master, char **av)
 		printf("\n");
 		free(path);
 		free(get);
-		return ;
+		exit(127);
 	}
 }
 

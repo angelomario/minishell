@@ -28,6 +28,8 @@
 # include <termios.h>
 # include <unistd.h>
 
+// int	*pid_address;
+
 typedef struct s_master
 {
 	pid_t	pid;
@@ -52,6 +54,8 @@ typedef struct s_data
 	int		q_duo;
 	int		q_s;
 }			t_data;
+
+int			g_func(int n);
 
 // char	**ft_split(char const *s, char c);
 int			ft_builting(char **args);
@@ -99,4 +103,8 @@ int			is_redirect(char *str);
 void		ft_setenv(t_master *master, char *name_var, char *new_value);
 int			ft_count_redir(char *s);
 int			is_redirect(char *str);
+int			kill_proccess(int pid, char *del, int stdout);
+int			is_heredoc(char **in);
+void		exit_130(int sig);
+void		breaker(int sig);
 #endif
