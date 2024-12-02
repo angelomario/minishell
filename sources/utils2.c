@@ -35,34 +35,33 @@ int	ft_count_redir(char *s)
 	}
 	return (count);
 }
-char *ft_format_in_redir(char *s, int i, int j, char c)
+char	*ft_format_in_redir(char *s, int i, int j, char c)
 {
-    t_data data;
+	t_data	data;
 
-    data.len = strlen(s) + (ft_count_redir(s) * 2) + 1;
-    data.q_s = 0;
-    data.q_duo = 0;
-    data.imput = malloc(sizeof(char) * data.len);
-    if (!data.imput)
-        return (NULL);
-    while (s[i])
-    {
-        if (s[i] == '"' && !data.q_s)
-            data.q_duo = !data.q_duo;
-        else if (s[i] == '\'' && !data.q_duo)
-            data.q_s = !data.q_s;
-        if ((s[i] == '>' || s[i] == '<') && (!data.q_s && !data.q_duo))
-        {
-            data.imput[j++] = c;
-            data.imput[j++] = s[i++];
-            if (s[i] == '>' || s[i] == '<')
-                data.imput[j++] = s[i++];
-            if (s[i] != '\0')
-                data.imput[j++] = c;
-        }
-        else
-            data.imput[j++] = s[i++];
-    }
-    return ( data.imput[j] = '\0', data.imput);
+	data.len = strlen(s) + (ft_count_redir(s) * 2) + 1;
+	data.q_s = 0;
+	data.q_duo = 0;
+	data.imput = malloc(sizeof(char) * data.len);
+	if (!data.imput)
+		return (NULL);
+	while (s[i])
+	{
+		if (s[i] == '"' && !data.q_s)
+			data.q_duo = !data.q_duo;
+		else if (s[i] == '\'' && !data.q_duo)
+			data.q_s = !data.q_s;
+		if ((s[i] == '>' || s[i] == '<') && (!data.q_s && !data.q_duo))
+		{
+			data.imput[j++] = c;
+			data.imput[j++] = s[i++];
+			if (s[i] == '>' || s[i] == '<')
+				data.imput[j++] = s[i++];
+			if (s[i] != '\0')
+				data.imput[j++] = c;
+		}
+		else
+			data.imput[j++] = s[i++];
+	}
+	return (data.imput[j] = '\0', data.imput);
 }
-
