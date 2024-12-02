@@ -154,7 +154,16 @@ int	is_built_in(t_master *master, char **in)
 	if (ft_strcmp(in[0], "export") == 0)
 		return ((master->status = filter_export(master, in)));
 	else if (ft_strcmp(in[0], "env") == 0)
-		return ((master->status = ft_env(master)));
+	{
+		if (ft_count_matriz(in) > 1)
+		{
+			print_default_fd(master, ft_strdup("env: ‘"));
+			print_default_fd(master, ft_strdup(in[1]));
+			print_default_fd(master, ft_strdup("’: No such file or directory\n"));
+			return (master->status = 127);
+		}
+		return ((master->status = ft_env(master)), 0);
+	}
 	else if (ft_strcmp(in[0], "unset") == 0)
 		return ((master->status = ft_unset(master, in)));
 	else if (ft_strcmp(in[0], "cd") == 0)
@@ -214,21 +223,19 @@ int	main(int ac, char **av, char **env)
 
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	// pid_address = (int *)malloc(sizeof(int) * 1);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
 	env = master->environ;
 	master->status = 0;
-	// pid_address = &master->pid_child;
+	master->options = (char **)malloc(sizeof(char *) * 1);
+	master->options[0] = NULL;
 	master->stdin_fd = dup(STDIN_FILENO);
 	master->stdout_fd = dup(STDOUT_FILENO);
 	while (1 && av && ac)
 	{
-		g_func(0);
 		master->imput = readline("minishell% ");
 		if (!master->imput)
 		{
-			kill_proccess(master->pid_child, NULL, master->stdout_fd);
 			printf("exit\n");
 			exit(0);
 		}

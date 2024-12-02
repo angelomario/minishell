@@ -80,10 +80,11 @@ int	ft_len_redir(t_master *master, char **in)
 	return (0);
 }
 
-int	redir_input(char *filename)
+int	redir_input(char *filename, int flag)
 {
 	int	fd;
 
+	(void)flag;
 	if (!filename)
 		return (-1);
 	fd = open(filename, O_RDONLY);
@@ -122,6 +123,44 @@ int	redir_output(char *name, int append)
 	return (close(fd), 0);
 }
 
+char	**add_str(char **matrix, char *new_string)
+{
+	char	**new_matrix;
+	int		len;
+	int		i;
+
+	len = ft_count_matriz(matrix);
+	i = -1;
+	new_matrix = (char **)malloc((len + 2) * sizeof(char *));
+	while (matrix[++i] != NULL)
+		new_matrix[i] = ft_strdup(matrix[i]);
+	new_matrix[i++] = ft_strdup(new_string);
+	new_matrix[i] = NULL;
+	free_matriz(matrix);
+	return (new_matrix);
+}
+
+int	to_configure(t_master *master, char *param, int flag, int (*f)(char *, int))
+{
+	int		i;
+	char	**mat;
+
+	mat = ft_split(param, ' ');
+	i = 1;
+	(void)flag;
+	(void)f;
+	if (f(mat[0], flag) == -1)
+		return (-1);
+	if (ft_count_matriz(mat) > 1)
+	{
+		while (mat[i])
+		{
+			master->options = add_str(master->options, mat[i++]);
+		}
+	}
+	return (0);
+}
+
 int	configure(t_master *master, char **in)
 {
 	int	i;
@@ -132,17 +171,17 @@ int	configure(t_master *master, char **in)
 	while (in[i])
 	{
 		if (ft_strcmp(in[i], ">") == 0 && in[i + 1] != NULL)
-			redir_output(in[++i], 0);
+			to_configure(master, in[++i], 0, redir_output);
 		else if (ft_strcmp(in[i], ">>") == 0 && in[i + 1] != NULL)
-			redir_output(in[++i], 1);
+			to_configure(master, in[++i], 1, redir_output);
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
 		{
-			if (redir_input(in[++i]) == -1)
+			if (to_configure(master, in[++i], 0, redir_input) == -1)
 			{
-				return (print_default_fd(master, ft_strdup("bash: ")),
-					print_default_fd(master, ft_strdup(in[i])),
-					print_default_fd(master,
-						ft_strdup(": No such file or directory\n")), -1);
+				print_default_fd(master, ft_strjoin("bash: ", in[i]));
+				print_default_fd(master,
+					ft_strdup(": No such file or directory\n"));
+				exit(127);
 			}
 		}
 		else
@@ -178,6 +217,7 @@ int	do_heredoc(t_master *master, char **in)
 	int	i;
 
 	i = 0;
+	signal(SIGINT, exit_130);
 	while (in[i])
 	{
 		if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
@@ -189,6 +229,22 @@ int	do_heredoc(t_master *master, char **in)
 	return (1);
 }
 
+char	**concatmatrix(t_master *master, char **mat1, char **mat2)
+{
+	char	*exp;
+	int		i;
+
+	i = 0;
+	while (mat2[i] && mat2)
+	{
+		exp = expanded(master, mat2[i]);
+		mat1 = add_str(mat1, exp);
+		free(exp);
+		i++;
+	}
+	return (mat1);
+}
+
 int	do_redirect(t_master *master, char **in)
 {
 	char	**command;
@@ -197,11 +253,10 @@ int	do_redirect(t_master *master, char **in)
 	if (master->pid_child == 0)
 	{
 		do_heredoc(master, in);
-		if (configure(master, in) == -1)
-			return (-1);
+		configure(master, in);
 		format_imput(&in[0], 127);
 		in[0] = expanded(master, in[0]);
-		command = ft_split(in[0], 127);
+		command = concatmatrix(master, ft_split(in[0], 127), master->options);
 		if (is_built_in(master, command) == 42 && (!is_redirect(in[0])
 				|| ((ft_count_matriz(in) < 2))))
 		{
@@ -213,6 +268,7 @@ int	do_redirect(t_master *master, char **in)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(master->pid_child, &master->status, 0);
+		master->status = WEXITSTATUS(master->status);
 		signal(SIGINT, sigint_handler);
 	}
 	return (0);
@@ -229,19 +285,19 @@ int	is_redirect(char *str)
 	return (0);
 }
 
-int	is_heredoc(char **in)
-{
-	int	i;
+// int	is_heredoc(char **in)
+// {
+// 	int	i;
 
-	i = 0;
-	while (in[i])
-	{
-		if ((ft_strcmp(in[i], "<<") == 0))
-			return (1);
-		i++;
-	}
-	return (0);
-}
+// 	i = 0;
+// 	while (in[i])
+// 	{
+// 		if ((ft_strcmp(in[i], "<<") == 0))
+// 			return (1);
+// 		i++;
+// 	}
+// 	return (0);
+// }
 
 int	only_cmd(t_master *master, char *tmp, char **in)
 {
@@ -256,11 +312,14 @@ int	only_cmd(t_master *master, char *tmp, char **in)
 		if (master->pid_child == 0)
 		{
 			ft_bin(master, in);
+			exit(127);
 		}
 		else
 		{
 			signal(SIGINT, breaker);
 			waitpid(master->pid_child, &master->status, 0);
+			if (WIFEXITED(master->status))
+				master->status = WEXITSTATUS(master->status);
 			signal(SIGINT, sigint_handler);
 		}
 	}
@@ -275,8 +334,6 @@ int	ft_redirect(t_master *master, char *str)
 	tmp = ft_format_in_redir(str, 0, 0, 127);
 	in = ft_split(tmp, 127);
 	rm_void(in);
-	if (is_heredoc(in))
-		g_func(1);
 	if (there_is_redirect(in))
 	{
 		if (!ft_len_redir(master, in))

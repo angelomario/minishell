@@ -98,7 +98,7 @@ int	check_identifiers(t_master *master, char *str)
 	if (str && !ft_isalpha(str[0]))
 	{
 		return (print_default_fd(master, ft_strdup("bash: export: `")),
-			print_default_fd(master, str), print_default_fd(master,
+			print_default_fd(master, ft_strdup(str)), print_default_fd(master,
 				ft_strdup("': not a valid identifier\n")), 1);
 	}
 	while (str != NULL && str[i])
@@ -110,7 +110,7 @@ int	check_identifiers(t_master *master, char *str)
 		else
 		{
 			return (print_default_fd(master, ft_strdup("bash: export: `")),
-				print_default_fd(master, str), print_default_fd(master,
+				print_default_fd(master, ft_strdup(str)), print_default_fd(master,
 					ft_strdup("': not a valid identifier\n")), 1);
 		}
 	}

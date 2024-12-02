@@ -1,117 +1,118 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   heredoc2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 15:00:26 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/28 22:41:28 by joandre          ###   ########.fr       */
+/*   Created: 2024/11/23 07:31:20 by aquissan          #+#    #+#             */
+/*   Updated: 2024/11/23 07:31:29 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-int	is_normal(char *del)
+// int	creat_file_tmp(char *nome_arquivo)
+// {
+// 	int	fd;
+
+// 	fd = open(nome_arquivo, O_CREAT | O_WRONLY | O_APPEND, 0644);
+// 	if (fd == -1)
+// 	{
+// 		perror("Erro ao abrir ou criar o arquivo");
+// 		return (-1);
+// 	}
+// 	return (fd);
+// }
+
+// int	child(char *del)
+// {
+// 	char	*input;
+// 	int		fd;
+
+// 	fd = creat_file_tmp("/tmp/.heredoc.txt");
+// 	if (fd == -1)
+// 		return (perror("Erro ao criar arquivo temporário"), 1);
+// 	// perror("chegou");
+// 	input = readline("heredoc> ");
+// 	while (input && del && ft_strcmp(input, del) != 0)
+// 	{
+// 		write(fd, input, strlen(input));
+// 		write(fd, "\n", 1);
+// 		free(input);
+// 		input = readline("heredoc> ");
+// 	}
+// 	free(input);
+// 	close(fd);
+// 	fd = open("/tmp/.heredoc.txt", O_RDONLY);
+// 	if (fd == -1)
+// 		return (perror("Erro ao reabrir o arquivo"), 1);
+// 	if (dup2(fd, STDIN_FILENO) == -1)
+// 		return (perror("Erro ao redirecionar stdin"), close(fd), 1);
+// 	close(fd);
+// 	free(del);
+// 	return (0);
+// }
+
+// int	ft_heredoc(char *del)
+// {
+// 	if (del)
+// 	{
+// 		child(del);
+// 		return (0);
+// 	}
+// 	return (1);
+// }
+
+int	child(t_master *master, char *del, int pipe_fd[2])
 {
-	int	i;
+	char	*input;
 
-	i = -1;
-	if (!del)
-		return (0);
-	while (del[i] && (del[i] == ' ' || del[i] == '\t'))
-		i++;
-	return (del[i] != '\0');
+	close(pipe_fd[0]);
+	signal(SIGINT, exit_130);
+	if ((dup2(master->stdin_fd, STDIN_FILENO) == -1) || (dup2(master->stdout_fd,
+				STDOUT_FILENO) == -1))
+	{
+		print_default_fd(master,
+			ft_strdup("Erro ao restaurar as saidas padrao\n"));
+	}
+	while (1)
+	{
+		input = readline("heredoc> ");
+		if (ft_strcmp(input, del) == 0)
+			break ;
+		if (!input)
+		{
+			print_default_fd(master, ft_strjoin("bash: warning: here-document at line 5 delimited by end-of-file (wanted `", del));
+			print_default_fd(master, ft_strdup("')\n"));
+			exit(127);
+		}
+		write(pipe_fd[1], input, ft_strlen(input));
+		write(pipe_fd[1], "\n", 1);
+		free(input);
+	}
+	return (close(pipe_fd[1]), free(input), 0);
 }
 
-char	*get_delimiter(char *str)
+int	ft_heredoc(t_master *master, char *del)
 {
-	char	ch;
+	int	pipe_fd[2];
 
-	while (*str == ' ' || *str == '\t')
-		str++;
-	if ((ft_strcmp(str, "''") == 0) || (ft_strcmp(str, "\"\"") == 0))
+	if (pipe(pipe_fd) == -1)
+		return (perror("Pipe"), -1);
+	master->pid_child = fork();
+	if (master->pid_child == 0)
 	{
-		ch = 10;
-		return (ft_strdup(&(ch)));
+		signal(SIGINT, sigint_handler);
+		exit(child(master, del, pipe_fd));
 	}
 	else
-		return (ft_strdup(str));
+	{
+		close(pipe_fd[1]);
+		if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+			return (perror("Pipe"), close(pipe_fd[1]), -1);
+		close(pipe_fd[0]);
+		waitpid(master->pid_child, &master->status, 0);
+	}
+	return (0);
 }
-
-int child2(t_master *master, int pipe_fd[2], char **in)
-{
-    char *del;
-    char *imput;
-
-    close(pipe_fd[0]); // Fecha o lado de leitura do pipe no filho
-    in = ft_strsplit(master->imput, "<<");
-    if (ft_count_matriz(in) >= 2)
-    {
-        del = get_delimiter(in[1]);
-        rm_void(in);
-
-        imput = readline("heredoc> ");
-        while (imput && ft_strcmp(imput, del) != 0)
-        {
-            write(pipe_fd[1], imput, ft_strlen(imput)); // Escreve no pipe
-            write(pipe_fd[1], "\n", 1); // Escreve nova linha
-            free(imput);
-            imput = readline("heredoc> ");
-        }
-        free(imput); // Libera a memória alocada por readline
-    }
-    free(del); // Libera o delimitador
-    close(pipe_fd[1]); // Fecha o lado de escrita do pipe no filho
-    return (0);
-}
-
-int father(t_master *master, int pipe_fd[2], int default_stdin, char **command)
-{
-    close(pipe_fd[1]); // Fecha o lado de escrita do pipe no pai
-    if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
-    {
-        perror("Dup2");
-        close(pipe_fd[0]);
-        return (-1);
-    }
-    close(pipe_fd[0]); // Fecha o lado de leitura do pipe após redirecionar
-    waitpid(master->pid_child, &master->status, 0);
-    if ((master->pid_child = fork()) == 0)
-        ft_bin(master, command); // Executa o comando
-    else
-        waitpid(master->pid_child, NULL, 0); // Espera o filho terminar
-
-    if (dup2(default_stdin, STDIN_FILENO) == -1)
-    {
-        perror("Dup2 restore");
-        close(default_stdin);
-        return (-1);
-    }
-    close(default_stdin); // Restaura o stdin original
-    return (0);
-}
-
-int heredoc(t_master *master, char **in)
-{
-    int pipe_fd[2];
-    int default_stdin;
-    char **command;
-
-    default_stdin = dup(STDIN_FILENO); // Faz uma cópia do stdin original
-    if (ft_count_matriz(in) >= 2)
-    {
-        command = ft_split(in[0], ' ');
-        if (pipe(pipe_fd) == -1)
-            return (perror("Pipe"), -1);
-        if ((master->pid_child = fork()) == 0)
-        {
-            exit(child2(master, pipe_fd, in)); // Chama a função do filho
-        }
-        else
-            father(master, pipe_fd, default_stdin, command); // Chama a função do pai
-        return (free_matriz(in), 0); // Libera a memória alocada
-    }
-    return (free_matriz(in), 1); // Caso de erro
-}
-

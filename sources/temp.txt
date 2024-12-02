@@ -1,3 +1,0 @@
-Esta é a primeira linha do heredoc
-Esta é a segunda linha
-E esta é a última linha

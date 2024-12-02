@@ -12,15 +12,6 @@
 
 #include "minishell.h"
 
-int	g_func(int n)
-{
-	static int	num = 0;
-
-	if (n >= 0)
-		num = n;
-	return (num);
-}
-
 void	exit_130(int sig)
 {
 	if (sig == SIGINT)
@@ -33,24 +24,16 @@ void	exit_130(int sig)
 void	sigint_handler(int sig)
 {
 	(void)sig;
-	if (g_func(-1) == 1)
-	{
-		write(1, "\n", 1);
-		exit(130);
-	}
-	if (g_func(-1) == 0)
-	{
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 
 int	kill_proccess(int pid, char *del, int stdout)
 {
-	if (del && (stdout >= 0))
+	if (del && (stdout))
 	{
 		ft_putstr_fd("bash: warning: here-document at line 5 delimited by end-of-file (wanted `",
 			stdout);

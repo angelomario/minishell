@@ -43,6 +43,7 @@ typedef struct s_master
 	int		status;
 	pid_t	pid_child;
 	char	*output;
+	char	**options;
 }			t_master;
 
 typedef struct s_data
@@ -54,8 +55,6 @@ typedef struct s_data
 	int		q_duo;
 	int		q_s;
 }			t_data;
-
-int			g_func(int n);
 
 // char	**ft_split(char const *s, char c);
 int			ft_builting(char **args);

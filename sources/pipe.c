@@ -73,6 +73,7 @@ int	ft_pipe(t_master *master)
 		{
 			reset_fd(master, pipefd, &input_fd);
 			waitpid(pid, &master->status, 0);
+			master->status = WEXITSTATUS(master->status);
 		}
 	}
 	return (0);

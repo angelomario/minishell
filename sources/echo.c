@@ -60,7 +60,7 @@ void	process_var(char *input, int *i, t_master *master, int *j)
 	{
 		value = ft_itoa(master->status);
 		append_str(&master->output, j, value);
-		//
+		free(value);
 	}
 	else
 	{
@@ -125,7 +125,7 @@ int	ft_echo(char **in)
 			if (in[i])
 				ft_putchar_fd(' ', 1);
 		}
-		return (printf("%c", c), 1);
+		return (printf("%c", c), 0);
 	}
-	return (0);
+	return (1);
 }
