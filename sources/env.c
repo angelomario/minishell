@@ -18,14 +18,19 @@
 int	ft_env(t_master *master)
 {
 	char	**env;
+	char	*tmp;
 
 	env = master->environ;
 	if (env && *env)
 	{
 		while (*env)
 		{
-			if (ft_strcmp(ft_strrchr(*env, '='), "=''") != 0)
-				printf("%s\n", *env);
+			tmp = ft_strrchr(*env, '=');
+			if (tmp != NULL)
+			{
+				if (ft_strcmp(tmp, "=''") != 0)
+					printf("%s\n", *env);
+			}
 			env++;
 		}
 		return (0);

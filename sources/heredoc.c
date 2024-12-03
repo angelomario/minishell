@@ -70,12 +70,8 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 
 	close(pipe_fd[0]);
 	signal(SIGINT, exit_130);
-	if ((dup2(master->stdin_fd, STDIN_FILENO) == -1) || (dup2(master->stdout_fd,
-				STDOUT_FILENO) == -1))
-	{
-		print_default_fd(master,
-			ft_strdup("Erro ao restaurar as saidas padrao\n"));
-	}
+	dup2(master->stdin_fd, STDIN_FILENO);
+	dup2(master->stdout_fd, STDOUT_FILENO);
 	while (1)
 	{
 		input = readline("heredoc> ");
@@ -83,7 +79,9 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 			break ;
 		if (!input)
 		{
-			print_default_fd(master, ft_strjoin("bash: warning: here-document at line 5 delimited by end-of-file (wanted `", del));
+			print_default_fd(master,
+				ft_strjoin("bash: warning: here-document at line 5 delimited by end-of-file (wanted `",
+					del));
 			print_default_fd(master, ft_strdup("')\n"));
 			exit(127);
 		}

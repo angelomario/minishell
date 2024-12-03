@@ -126,7 +126,6 @@ int	do_export(t_master *master, char *in)
 	in = remove_if_even(in, '\"');
 	in = remove_if_even(in, '\'');
 	name = get_name(in);
-	name = in;
 	if ((ft_strchr(in, '=')) == NULL)
 		i = ft_export(master, name, NULL);
 	else
@@ -141,15 +140,19 @@ int	do_export(t_master *master, char *in)
 
 int	filter_export(t_master *master, char **in)
 {
+	int	i;
+
+	i = 1;
 	if (ft_count_matriz(in) <= 1)
 		ft_export(master, NULL, NULL);
 	else
 	{
-		while (*(++in))
+		while (in && in[i] != NULL)
 		{
-			if (check_identifiers(master, *in))
-				in++;
-			do_export(master, *in);
+			if (check_identifiers(master, in[i]))
+				i++;
+			else
+				do_export(master, in[i++]);
 		}
 	}
 	return (0);
@@ -241,7 +244,7 @@ int	replace_env(t_master *master, char *name, char *value)
 		nlen = ft_strlen(name) - 1;
 	while (*env)
 	{
-		if ((ft_strncmp(*env, name, nlen) == 0) && (*env)[nlen] == '=')
+		if (ft_strncmp(*env, name, nlen) == 0)
 		{
 			if (value == NULL && ft_strchr(name, '='))
 			{
