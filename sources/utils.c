@@ -35,16 +35,15 @@ void	format_imput(char **s, int n)
 
 void	str_replace_del(char *str, char target, char to_replace)
 {
-	int		i;
-	int		simple_asp;
-	int		double_asp;
+	int	i;
+	int	simple_asp;
+	int	double_asp;
 
 	simple_asp = 0;
 	double_asp = 0;
 	i = 0;
 	while (str[i] != '\0')
 	{
-		// Verifica a entrada ou saída de aspas simples
 		if (str[i] == '\'' && !simple_asp)
 			simple_asp = !simple_asp;
 		else if (str[i] == '"' && !simple_asp)
