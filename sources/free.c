@@ -56,3 +56,21 @@ void	free_matriz(char **mat)
 		free(mat[i++]);
 	free(mat);
 }
+
+int	ft_clean_master(t_master *master)
+{
+	if (master->in && *master->in)
+		free_matriz(master->in);
+	if (master->environ && *master->environ)
+		free_matriz(master->environ);
+	free_matriz(master->options);
+	if (master->output)
+		free(master->output);
+	if (master->imput)
+		free(master->imput);
+	if (master->history)
+		free(master->history);
+	if (master)
+		free(master);
+	return (0);
+}

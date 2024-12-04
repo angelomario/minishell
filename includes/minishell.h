@@ -37,7 +37,6 @@ typedef struct s_master
 	char	**in;
 	char	*history;
 	char	**environ;
-	char	***cmd;
 	int		stdin_fd;
 	int		stdout_fd;
 	int		status;
@@ -107,4 +106,5 @@ int			is_heredoc(char **in);
 void		exit_130(int sig);
 void		breaker(int sig);
 void		str_replace_del(char *str, char target, char to_replace);
+int			ft_clean_master(t_master *master);
 #endif

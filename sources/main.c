@@ -229,6 +229,10 @@ int	main(int ac, char **av, char **env)
 	master->status = 0;
 	master->options = (char **)malloc(sizeof(char *) * 1);
 	master->options[0] = NULL;
+	master->history = NULL;
+	master->imput = NULL;
+	master->output = NULL;
+	master->in = NULL;
 	master->stdin_fd = dup(STDIN_FILENO);
 	master->stdout_fd = dup(STDOUT_FILENO);
 	while (1 && av && ac)
@@ -237,9 +241,11 @@ int	main(int ac, char **av, char **env)
 		if (!master->imput)
 		{
 			printf("exit\n");
+			ft_clean_master(master);
 			exit(0);
 		}
 		master->history = ft_strdup(master->imput);
+		// master->imput = expanded(master, master->imput);
 		trim_whitespace(master->imput);
 		if (ft_strcmp(master->imput, "") == 0)
 			continue ;
