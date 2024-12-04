@@ -50,6 +50,10 @@ run: re $(NAME)
 	@clear
 	@./$(NAME)
 
+run_leak: re $(NAME)
+	@clear
+	@valgrind -s --leak-check=full ./$(NAME)
+
 clean:
 	make clean -C $(DIR_LIB)
 	$(RM) $(SRC_OBJ)
@@ -66,22 +70,3 @@ push: fclean
 	git branch;
 	git status && git add * && git status && git commit -m"in proccess" && git push;
 
-aquissan:
-	clear;
-	git branch;
-	git checkout main && git branch && git merge $@;
-	git checkout $@;
-	git branch;
-
-joandre:
-	clear;
-	git branch;
-	git checkout master && git branch && git merge $@;
-	git checkout $@;
-	git branch;
-
-pusha:  fclean
-	clear;
-	git branch;
-	git status && git add . && git status && git commit -m"in proccess"
-	git push git@github.com:angelomario/minishell.git;

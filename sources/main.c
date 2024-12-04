@@ -252,6 +252,7 @@ int	main(int ac, char **av, char **env)
 		if (its_ok(master->imput))
 		{
 			str_replace_del(&master->imput[0], '|', 127);
+			trim_whitespace(master->imput);
 			master->in = ft_split(master->imput, 127);
 			if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
 					'|')) && ft_valid_args(master->in))
