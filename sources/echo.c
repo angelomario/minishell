@@ -64,7 +64,7 @@ void	process_var(char *input, int *i, t_master *master, int *j)
 	}
 	else
 	{
-		while (input[*i] && (isalnum(input[*i]) || input[*i] == '_'))
+		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
 			(*i)++;
 		ft_strncpy(var_name, &input[var_start], *i - var_start);
 		var_name[*i - var_start] = '\0';
@@ -94,6 +94,39 @@ char	*expanded(t_master *master, char *imput)
 			in_single_quotes = !in_single_quotes;
 		else if (imput[i] == '"' && !in_single_quotes)
 			in_double_quotes = !in_double_quotes;
+		else if (imput[i] == '$' && !in_single_quotes)
+			process_var(imput, &i, master, &j);
+		else
+			append_char(&master->output, &j, imput[i]);
+		i++;
+	}
+	return (master->output);
+}
+
+char	*expan_env(t_master *master, char *imput)
+{
+	int	i;
+	int	j;
+	int	in_single_quotes;
+	int	in_double_quotes;
+
+	master->output = NULL;
+	i = 0;
+	j = 0;
+	in_single_quotes = 0;
+	in_double_quotes = 0;
+	while (imput[i])
+	{
+		if (imput[i] == '\'' && !in_double_quotes)
+		{
+			in_single_quotes = !in_single_quotes;
+			append_char(&master->output, &j, imput[i]);
+		}
+		else if (imput[i] == '"' && !in_single_quotes)
+		{
+			in_double_quotes = !in_double_quotes;
+			append_char(&master->output, &j, imput[i]);
+		}
 		else if (imput[i] == '$' && !in_single_quotes)
 			process_var(imput, &i, master, &j);
 		else

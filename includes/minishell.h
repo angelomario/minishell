@@ -107,4 +107,5 @@ void		exit_130(int sig);
 void		breaker(int sig);
 void		str_replace_del(char *str, char target, char to_replace);
 int			ft_clean_master(t_master *master);
+char		*expan_env(t_master *master, char *imput);
 #endif

@@ -245,7 +245,7 @@ int	main(int ac, char **av, char **env)
 			exit(0);
 		}
 		master->history = ft_strdup(master->imput);
-		// master->imput = expanded(master, master->imput);
+		master->imput = expan_env(master, master->imput);
 		trim_whitespace(master->imput);
 		if (ft_strcmp(master->imput, "") == 0)
 			continue ;
