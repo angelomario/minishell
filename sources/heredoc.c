@@ -75,8 +75,6 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 	while (1)
 	{
 		input = readline("heredoc> ");
-		if (ft_strcmp(input, del) == 0)
-			break ;
 		if (!input)
 		{
 			print_default_fd(master,
@@ -85,6 +83,9 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 			print_default_fd(master, ft_strdup("')\n"));
 			exit(127);
 		}
+		input = expan_env(master, input);
+		if (ft_strcmp(input, del) == 0)
+			break ;
 		write(pipe_fd[1], input, ft_strlen(input));
 		write(pipe_fd[1], "\n", 1);
 		free(input);
