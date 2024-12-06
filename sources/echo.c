@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 08:25:32 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/25 21:49:04 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/06 07:49:35 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,30 +49,32 @@ void	append_str(char **output, int *j, char *str)
 	*j += len;
 }
 
-void	process_var(char *input, int *i, t_master *master, int *j)
+void    process_var(char *input, int *i, t_master *master, int *j)
 {
-	char	var_name[100];
-	int		var_start;
-	char	*value;
-
-	var_start = ++(*i);
-	if (input[var_start] == '?')
-	{
-		value = ft_itoa(master->status);
-		append_str(&master->output, j, value);
-		free(value);
-	}
-	else
-	{
-		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
-			(*i)++;
-		ft_strncpy(var_name, &input[var_start], *i - var_start);
-		var_name[*i - var_start] = '\0';
-		value = ft_getenv(master->environ, var_name);
-		if (value)
-			append_str(&master->output, j, value);
-		(*i)--;
-	}
+    t_data  data;
+    data.var_start = ++(*i);
+    if (input[data.var_start] == '?')
+    {
+        data.value = ft_itoa(master->status);
+        append_str(&master->output, j, data.value);
+        free(data.value);
+    }
+    else if (input[data.var_start] == '$')
+    {
+        ft_putchar_fd('$', 1);
+        (*i)--;
+    }
+    else
+    {
+        while (input[*i] && (isalnum(input[*i]) || input[*i] == '_'))
+            (*i)++;
+        ft_strncpy(data.var_name, &input[data.var_start], *i - data.var_start);
+        data.var_name[*i - data.var_start] = '\0';
+        data.value = ft_getenv(master->environ, data.var_name);
+        if (data.value)
+            append_str(&master->output, j, data.value);
+        (*i)--;
+    }
 }
 
 char	*expanded(t_master *master, char *imput)
@@ -94,7 +96,8 @@ char	*expanded(t_master *master, char *imput)
 			in_single_quotes = !in_single_quotes;
 		else if (imput[i] == '"' && !in_single_quotes)
 			in_double_quotes = !in_double_quotes;
-		else if (imput[i] == '$' && !in_single_quotes)
+		else if (imput[i] == '$' && (imput[i + 1] != '\0' && imput[i + 1] != ' ')
+			&& !in_single_quotes)
 			process_var(imput, &i, master, &j);
 		else
 			append_char(&master->output, &j, imput[i]);
@@ -127,13 +130,37 @@ char	*expan_env(t_master *master, char *imput)
 			in_double_quotes = !in_double_quotes;
 			append_char(&master->output, &j, imput[i]);
 		}
-		else if (imput[i] == '$' && !in_single_quotes)
+		else if (imput[i] == '$' && (imput[i + 1] != '\0' && imput[i + 1] != ' '))
 			process_var(imput, &i, master, &j);
 		else
 			append_char(&master->output, &j, imput[i]);
 		i++;
 	}
 	return (master->output);
+}
+
+void	ft_flag_echo(char **s, int *i)
+{
+	int	j;
+
+	j = 0;
+	while (s[(*i)])
+	{
+		j = 0;
+		if (s[(*i)][j] == '-' && s[(*i)][j + 1] == 'n')
+		{
+			j++;
+			while (s[(*i)][j])
+			{
+				if (s[(*i)][j] != 'n')
+					return ;
+				j++;
+			}
+		}
+		if (j < 1)
+			return ;
+		(*i)++;
+	}
 }
 
 int	ft_echo(char **in)
@@ -147,11 +174,11 @@ int	ft_echo(char **in)
 		c = '\n';
 		if (in[i] == NULL)
 			return (ft_putchar_fd('\n', 1), 1);
-		if (ft_strcmp(in[i], "-n") == 0)
-		{
-			i = 2;
+		ft_flag_echo(in, &i);
+		if (i > 1)
 			c = '\0';
-		}
+		else 
+			i = 1;
 		while (in[i])
 		{
 			ft_putstr_fd(in[i++], 1);

@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 09:00:25 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/29 08:41:48 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/03 08:33:19 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int	redir_output(char *name, int append)
 		fd = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		return (-1);
+		return (perror("Erro ao abrir o arquivo"), -1);
 	}
 	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
@@ -145,7 +145,6 @@ int	to_configure(t_master *master, char *param, int flag, int (*f)(char *, int))
 	int		i;
 	char	**mat;
 
-	param = expanded(master, param);
 	mat = ft_split(param, ' ');
 	i = 1;
 	(void)flag;
@@ -159,40 +158,35 @@ int	to_configure(t_master *master, char *param, int flag, int (*f)(char *, int))
 			master->options = add_str(master->options, mat[i++]);
 		}
 	}
-	return (0);
-}
-
-int	file_error(t_master *master, char *filename)
-{
-	print_default_fd(master, ft_strjoin("bash: ", filename));
-	print_default_fd(master, ft_strdup(": No such file or directory\n"));
+	free_matriz(mat);
 	return (0);
 }
 
 int	configure(t_master *master, char **in)
 {
 	int	i;
-	int	config;
 
 	i = 0;
-	config = 0;
 	if (!in || !(*in))
 		return (-1);
 	while (in[i])
 	{
 		if (ft_strcmp(in[i], ">") == 0 && in[i + 1] != NULL)
-			config = to_configure(master, in[++i], 0, redir_output);
+			to_configure(master, in[++i], 0, redir_output);
 		else if (ft_strcmp(in[i], ">>") == 0 && in[i + 1] != NULL)
-			config = to_configure(master, in[++i], 1, redir_output);
+			to_configure(master, in[++i], 1, redir_output);
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
-			config = to_configure(master, in[++i], 0, redir_input);
+		{
+			if (to_configure(master, in[++i], 0, redir_input) == -1)
+			{
+				print_default_fd(master, ft_strjoin("bash: ", in[i]));
+				print_default_fd(master,
+					ft_strdup(": No such file or directory\n"));
+				exit(127);
+			}
+		}
 		else
 			i++;
-		if (config == -1)
-		{
-			return (file_error(master, expanded(master, in[i])),
-				ft_clean_master(master), free_matriz(in), exit(127), 0);
-		}
 	}
 	return (0);
 }
@@ -311,9 +305,7 @@ int	only_cmd(t_master *master, char *tmp, char **in)
 	free_matriz(in);
 	format_imput(&tmp, 127);
 	tmp = expanded(master, tmp);
-	// str_replace_del(tmp, ' ', 127);
 	in = ft_split(tmp, 127);
-	// printf("%s\n", in[0]);
 	if ((is_built_in(master, in) == 42) && (!is_redirect(in[0])
 			|| (ft_count_matriz(in) < 2)))
 	{
@@ -332,8 +324,10 @@ int	only_cmd(t_master *master, char *tmp, char **in)
 			signal(SIGINT, sigint_handler);
 		}
 	}
-	return (0);
+	return (free_matriz(in), free(tmp), 0);
+	
 }
+
 
 int	ft_redirect(t_master *master, char *str)
 {
@@ -353,5 +347,6 @@ int	ft_redirect(t_master *master, char *str)
 	{
 		only_cmd(master, tmp, in);
 	}
+	//free_matriz(in);
 	return (free(tmp), 0);
 }

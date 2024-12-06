@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2024/11/29 08:42:11 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/03 00:39:30 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_master
 	char	**in;
 	char	*history;
 	char	**environ;
+	char	***cmd;
 	int		stdin_fd;
 	int		stdout_fd;
 	int		status;
@@ -53,6 +54,9 @@ typedef struct s_data
 	char	*imput;
 	int		q_duo;
 	int		q_s;
+	int		var_start;
+	char	*value;
+	char	var_name[100];
 }			t_data;
 
 // char	**ft_split(char const *s, char c);
@@ -68,6 +72,7 @@ int			ft_unset(t_master *master, char **str);
 void		ft_exit(t_master *master);
 void		*ft_realloc(void *ptr, size_t new_size);
 int			ft_export(t_master *master, char *name, char *value);
+int			export(t_master *master, char **in);
 char		**ft_arrdup(char **environ);
 int			ft_count_matriz(char **mat);
 int			filter_export(t_master *master, char **in);
@@ -108,4 +113,5 @@ void		breaker(int sig);
 void		str_replace_del(char *str, char target, char to_replace);
 int			ft_clean_master(t_master *master);
 char		*expan_env(t_master *master, char *imput);
+int			ft_clean_master(t_master *master);
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 14:06:21 by aquissan          #+#    #+#             */
-/*   Updated: 2024/10/30 14:06:41 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/12/03 00:38:57 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,7 @@ int	replace_env(t_master *master, char *name, char *value)
 		nlen = ft_strlen(name) - 1;
 	while (*env)
 	{
-		if (ft_strncmp(*env, name, nlen) == 0)
+		if ((ft_strncmp(*env, name, nlen) == 0) && (*env)[nlen] == '=')
 		{
 			if (value == NULL && ft_strchr(name, '='))
 			{

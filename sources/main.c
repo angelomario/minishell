@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:07:25 by joandre           #+#    #+#             */
-/*   Updated: 2024/11/29 09:10:52 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/03 09:10:28 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,29 @@ int	ft_countchar(char *str, char ch)
 		str++;
 	}
 	return (i);
+}
+
+void	str_replace_del(char *str, char target, char to_replace)
+{
+	int	i;
+	int	simple_asp;
+	int	double_asp;
+
+	simple_asp = 0;
+	double_asp = 0;
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == '\'')
+			simple_asp = !simple_asp;
+		else if (str[i] == '"')
+			double_asp = !double_asp;
+		if (!simple_asp && !double_asp && str[i] == target)
+		{
+			str[i] = to_replace;
+		}
+		i++;
+	}
 }
 
 void	rm_void(char **mat)
@@ -62,17 +85,18 @@ int	wait_prompt(t_master *master)
 	{
 		exit(0);
 	}
+	str_replace_del(tmp, '|', 127);
 	master->imput = (char *)ft_realloc(master->imput, (ft_strlen(master->imput)
 				+ ft_strlen(tmp) + 1));
 	ft_strcat(master->imput, tmp);
 	add_history(master->imput);
 	free_matriz(master->in);
-	master->in = ft_split(master->imput, '|');
+	master->in = ft_split(master->imput, 127);
 	rm_void(master->in);
 	if (!validpipe(master->imput))
 		return (1);
-	if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
-				'|') >= ft_count_matriz(master->in)))
+	if ((ft_countchar(master->imput, 127) > 0) && (ft_countchar(master->imput,
+				127) >= ft_count_matriz(master->in)))
 	{
 		wait_prompt(master);
 	}
@@ -86,8 +110,9 @@ int	do_pipe(t_master *master)
 	if (master->pid_child == 0)
 	{
 		signal(SIGINT, exit_130);
-		if ((ft_countchar(master->imput, '|') > 0) && (ft_countchar(master->imput,
-					'|') >= ft_count_matriz(master->in)))
+		if ((ft_countchar(master->imput, 127) > 0)
+			&& (ft_countchar(master->imput,
+					127) >= ft_count_matriz(master->in)))
 		{
 			if (wait_prompt(master))
 			{
@@ -159,7 +184,8 @@ int	is_built_in(t_master *master, char **in)
 		{
 			print_default_fd(master, ft_strdup("env: ‘"));
 			print_default_fd(master, ft_strdup(in[1]));
-			print_default_fd(master, ft_strdup("’: No such file or directory\n"));
+			print_default_fd(master,
+				ft_strdup("’: No such file or directory\n"));
 			return (master->status = 127);
 		}
 		return ((master->status = ft_env(master)), 0);
@@ -217,6 +243,37 @@ int	ft_valid_args(char **in)
 	return (1);
 }
 
+void	ft_aux_main(t_master *master)
+{
+	if (!master->imput)
+	{
+		printf("exit\n");
+		ft_clean_master(master);
+		exit(0);
+	}
+	if (ft_strcmp(master->imput, "") == 0)
+		return ;
+	master->history = ft_strdup(master->imput);
+	master->imput = expan_env(master, master->imput);
+	trim_whitespace(master->imput);
+	if (its_ok(master->imput))
+	{
+		str_replace_del(&master->imput[0], '|', 127);
+		trim_whitespace(master->imput);
+		master->in = ft_split(master->imput, 127);
+		if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
+					127)) && ft_valid_args(master->in))
+			do_pipe(master);
+		else
+		{
+			if (ft_redirect(master, master->imput) == -1)
+				return ;
+		}
+	}
+	else
+		printf("Error\n");
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
@@ -225,48 +282,17 @@ int	main(int ac, char **av, char **env)
 	signal(SIGQUIT, SIG_IGN);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
-	env = &master->environ[0];
+	env = master->environ;
 	master->status = 0;
 	master->options = (char **)malloc(sizeof(char *) * 1);
 	master->options[0] = NULL;
-	master->history = NULL;
-	master->imput = NULL;
-	master->output = NULL;
-	master->in = NULL;
 	master->stdin_fd = dup(STDIN_FILENO);
 	master->stdout_fd = dup(STDOUT_FILENO);
 	while (1 && av && ac)
 	{
 		master->imput = readline("minishell% ");
-		if (!master->imput)
-		{
-			printf("exit\n");
-			ft_clean_master(master);
-			exit(0);
-		}
-		master->history = ft_strdup(master->imput);
-		master->imput = expan_env(master, master->imput);
-		trim_whitespace(master->imput);
-		if (ft_strcmp(master->imput, "") == 0)
-			continue ;
-		if (its_ok(master->imput))
-		{
-			str_replace_del(&master->imput[0], '|', 127);
-			trim_whitespace(master->imput);
-			master->in = ft_split(master->imput, 127);
-			if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
-					'|')) && ft_valid_args(master->in))
-				do_pipe(master);
-			else
-			{
-				if (ft_redirect(master, master->imput) == -1)
-					break ;
-			}
-		}
-		else
-			printf("Error\n");
-		// free_matriz(master->in);
-		add_history(master->history);
+		ft_aux_main(master);
 	}
-	return (free(master->imput), 0);
+	
+	return (ft_clean_master(master), 0);
 }

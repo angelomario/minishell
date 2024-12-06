@@ -33,29 +33,6 @@ void	format_imput(char **s, int n)
 	}
 }
 
-void	str_replace_del(char *str, char target, char to_replace)
-{
-	int	i;
-	int	simple_asp;
-	int	double_asp;
-
-	simple_asp = 0;
-	double_asp = 0;
-	i = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] == '\'' && !simple_asp)
-			simple_asp = !simple_asp;
-		else if (str[i] == '"' && !simple_asp)
-			double_asp = !double_asp;
-		if (!simple_asp && !double_asp && str[i] == target)
-		{
-			str[i] = to_replace;
-		}
-		i++;
-	}
-}
-
 char	*ft_format_quotes(char *s, char *c)
 {
 	char	quote;

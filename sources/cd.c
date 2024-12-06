@@ -23,12 +23,7 @@ char	*ft_getenv(char **env, char *name)
 		if ((ft_strncmp(env[i], name, ft_strlen(name)) == 0)
 			&& env[i][len] == '=')
 		{
-			if (ft_strlen(ft_strchr(env[i], '=')) > 1)
-			{
-				return (ft_strdup(&((ft_strchr(env[i], '='))[1])));
-			}
-			else
-				return (NULL);
+			return (&env[i][len + 1]);
 		}
 		i++;
 	}
@@ -47,7 +42,7 @@ void	ft_setenv(t_master *master, char *name_var, char *new_value)
 		if (ft_strncmp(master->environ[i], name_var, len) == 0)
 		{
 			free(master->environ[i]);
-			master->environ[i] = new_value;
+			master->environ[i] = ft_strdup(new_value);
 			return ;
 		}
 		i++;
@@ -60,12 +55,15 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 	char	*oldpwd;
 	char	*pwd;
 	char	*dir;
+	char	*error_msg;
 
 	i = 0;
-	if (!(cwd))
-		return (free((cmd)), 0);
+	if (!cwd)
+		return (free(cmd), 0);
 	oldpwd = ft_strjoin(cmd, cwd);
-	ft_setenv(master, "OLDPWD=", oldpwd);
+	if (oldpwd)
+		ft_setenv(master, "OLDPWD=", oldpwd);
+	free(oldpwd);
 	i++;
 	if (in[i] == NULL)
 		chdir(ft_getenv(master->environ, "HOME"));
@@ -73,14 +71,18 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 	{
 		if (chdir(in[i]) == -1)
 		{
-			print_default_fd(master,
-				ft_strjoin("cd: no such file or directory: ", in[i]));
+			error_msg = ft_strjoin("cd: no such file or directory: ", in[i]);
+			if (error_msg)
+			{
+				print_default_fd(master, error_msg);
+				free(error_msg);
+			}
 			printf("\n");
 		}
 	}
 	dir = getcwd(NULL, 0);
 	pwd = ft_strjoin("PWD=", dir);
-	return (ft_setenv(master, "PWD=", pwd), free(cwd), free(cmd), free(dir), 0);
+	return (ft_setenv(master, "PWD=", pwd), free(cwd), free(cmd), free(pwd), free(dir), 0);
 }
 
 int	ft_cd(t_master *master, char **in)
