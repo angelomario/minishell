@@ -27,16 +27,18 @@ int	ft_unset(t_master *master, char **str)
 			return (-1);
 		while (*env != NULL)
 		{
-			if (ft_strncmp(*(env), *str, ft_strlen(*str)) == 0 && (*env)[ft_strlen(*str)] == '=')
+			if (ft_strncmp(*(env), *str, ft_strlen(*str)) == 0
+				&& ((*env)[ft_strlen(*str)] == '='
+					|| ft_strlen(*env) == ft_strlen(*str)))
 			{
 				next_env = env;
+				free(*next_env);
 				while (*(next_env + 1) != NULL)
 				{
 					*next_env = *(next_env + 1);
 					next_env++;
 				}
 				*next_env = NULL;
-				free(*(next_env + 1));
 			}
 			env++;
 		}

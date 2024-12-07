@@ -60,17 +60,25 @@ void	free_matriz(char **mat)
 int	ft_clean_master(t_master *master)
 {
 	if (master->in && *master->in)
+	{
 		free_matriz(master->in);
-	if (master->environ && *master->environ)
-		free_matriz(master->environ);
-	free_matriz(master->options);
+		master->in = NULL;
+	}
+	if (master->options)
+	{
+		free_matriz(master->options);
+		master->options = (char **)malloc(sizeof(char *) * 1);
+		*master->options = NULL;
+	}
 	if (master->output)
+	{
 		free(master->output);
+		master->output = NULL;
+	}
 	if (master->imput)
+	{
 		free(master->imput);
-	if (master->history)
-		free(master->history);
-	if (master)
-		free(master);
+		master->imput = NULL;
+	}
 	return (0);
 }

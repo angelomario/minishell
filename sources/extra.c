@@ -23,13 +23,38 @@ char	*ft_strstr(char *s1, char *s2)
 // 	return (i);
 // }
 
-void	*ft_realloc(void *ptr, size_t new_size)
+// void	*ft_realloc(void *ptr, size_t new_size)
+// {
+// 	void	*new_ptr;
+// 	size_t	old_size;
+// 	size_t	size;
+
+// 	if (new_size <= 0)
+// 	{
+// 		free(ptr);
+// 		return (NULL);
+// 	}
+// 	if (ptr == NULL)
+// 		return (malloc(new_size));
+// 	new_ptr = malloc(new_size);
+// 	if (new_ptr == NULL)
+// 		return (NULL);
+// 	old_size = (sizeof(ptr) * 1024);
+// 	if ((old_size < new_size))
+// 		size = old_size;
+// 	else
+// 		size = new_size;
+// 	ft_memcpy(new_ptr, ptr, size);
+// 	free(ptr);
+// 	return (new_ptr);
+// }
+
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 {
 	void	*new_ptr;
-	size_t	old_size;
-	size_t	size;
+	size_t	size_to_copy;
 
-	if (new_size <= 0)
+	if (new_size == 0)
 	{
 		free(ptr);
 		return (NULL);
@@ -37,14 +62,11 @@ void	*ft_realloc(void *ptr, size_t new_size)
 	if (ptr == NULL)
 		return (malloc(new_size));
 	new_ptr = malloc(new_size);
-	if (new_ptr == NULL)
+	if (!new_ptr)
 		return (NULL);
-	old_size = (sizeof(ptr) * 1024);
-	if ((old_size < new_size))
-		size = old_size;
-	else
-		size = new_size;
-	ft_memcpy(new_ptr, ptr, size);
+	// Determina o tamanho a ser copiado
+	size_to_copy = (old_size < new_size) ? old_size : new_size;
+	ft_memcpy(new_ptr, ptr, size_to_copy);
 	free(ptr);
 	return (new_ptr);
 }

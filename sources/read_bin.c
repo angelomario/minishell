@@ -59,17 +59,23 @@ int	built_in_path(char *cmd_new)
 	int	len_path;
 
 	len_path = ft_strlen(cmd_new);
-	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("env")]), "env") == 0)
+	if (len_path >= ft_strlen("env") && ft_strcmp(&(cmd_new[len_path
+				- ft_strlen("env")]), "env") == 0)
 		return (1);
-	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("export")]), "export") == 0)
+	if (len_path >= ft_strlen("export") && ft_strcmp(&(cmd_new[len_path
+				- ft_strlen("export")]), "export") == 0)
 		return (1);
-	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("echo")]), "echo") == 0)
+	if (len_path >= ft_strlen("echo") && ft_strcmp(&(cmd_new[len_path
+				- ft_strlen("echo")]), "echo") == 0)
 		return (1);
-	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("cd")]), "cd") == 0)
+	if (len_path >= ft_strlen("cd") && ft_strcmp(&(cmd_new[len_path
+				- ft_strlen("cd")]), "cd") == 0)
 		return (1);
-	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("pwd")]), "pwd") == 0)
+	if (len_path >= ft_strlen("pwd") && ft_strcmp(&(cmd_new[len_path
+				- ft_strlen("pwd")]), "pwd") == 0)
 		return (1);
-	if (ft_strcmp(&(cmd_new[len_path - ft_strlen("unset")]), "unset") == 0)
+	if (len_path >= ft_strlen("unset") && ft_strcmp(&(cmd_new[len_path
+				- ft_strlen("unset")]), "unset") == 0)
 		return (1);
 	return (0);
 }
@@ -93,6 +99,7 @@ int	ft_bin_(t_master *master, char **av, char *path)
 		if (ft_strchr(av[0], '/'))
 			return (-1);
 		cmd_new = malloc(ft_strlen(path) + ft_strlen(av[0]) + 2);
+		ft_memset(cmd_new, 0, ft_strlen(path) + ft_strlen(av[0]) + 2);
 		if (built_in_path(cmd_new))
 		{
 			free(cmd_new);

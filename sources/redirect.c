@@ -112,7 +112,7 @@ int	redir_output(char *name, int append)
 		fd = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		return (perror("Erro ao abrir o arquivo"), -1);
+		return (perror("bash"), -1);
 	}
 	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
@@ -150,7 +150,7 @@ int	to_configure(t_master *master, char *param, int flag, int (*f)(char *, int))
 	(void)flag;
 	(void)f;
 	if (f(mat[0], flag) == -1)
-		return (-1);
+		return (free_matriz(mat), -1);
 	if (ft_count_matriz(mat) > 1)
 	{
 		while (mat[i])
@@ -248,16 +248,20 @@ char	**concatmatrix(t_master *master, char **mat1, char **mat2)
 
 int	do_redirect(t_master *master, char **in)
 {
+	char	*tmp;
 	char	**command;
 
+	master->output = (char *)malloc(sizeof(char) * 1);
 	master->pid_child = fork();
 	if (master->pid_child == 0)
 	{
+		free(master->output);
 		do_heredoc(master, in);
 		configure(master, in);
 		format_imput(&in[0], 127);
-		in[0] = expanded(master, in[0]);
-		command = concatmatrix(master, ft_split(in[0], 127), master->options);
+		tmp = expanded(master, in[0]);
+		command = concatmatrix(master, ft_split(tmp, 127), master->options);
+		free(tmp);
 		if (is_built_in(master, command) == 42 && (!is_redirect(in[0])
 				|| ((ft_count_matriz(in) < 2))))
 		{
@@ -324,10 +328,8 @@ int	only_cmd(t_master *master, char *tmp, char **in)
 			signal(SIGINT, sigint_handler);
 		}
 	}
-	return (free_matriz(in), free(tmp), 0);
-	
+	return (free_matriz(in), 0);
 }
-
 
 int	ft_redirect(t_master *master, char *str)
 {
@@ -342,11 +344,11 @@ int	ft_redirect(t_master *master, char *str)
 		if (!ft_len_redir(master, in))
 			if (do_redirect(master, in) == -1)
 				return (free(tmp), free_matriz(in), -1);
+		return (free(tmp), free_matriz(in), 0);
 	}
 	else
 	{
 		only_cmd(master, tmp, in);
 	}
-	//free_matriz(in);
 	return (free(tmp), 0);
 }

@@ -110,7 +110,8 @@ int	check_identifiers(t_master *master, char *str)
 		else
 		{
 			return (print_default_fd(master, ft_strdup("bash: export: `")),
-				print_default_fd(master, ft_strdup(str)), print_default_fd(master,
+				print_default_fd(master, ft_strdup(str)),
+				print_default_fd(master,
 					ft_strdup("': not a valid identifier\n")), 1);
 		}
 	}
@@ -135,7 +136,7 @@ int	do_export(t_master *master, char *in)
 		else
 			i = ft_export(master, name, &(ft_strchr(in, '=')[1]));
 	}
-	return (i);
+	return (free(name), i);
 }
 
 int	filter_export(t_master *master, char **in)
@@ -218,10 +219,10 @@ char	*ft_joincheck(char *name, char *value)
 	char	*new_var;
 
 	new_var = (char *)malloc(sizeof(char) * (ft_strlen(name) + ft_strlen(value)
-				+ 2));
+				+ 4));
 	if (!new_var || !name)
 		return (NULL);
-	ft_memset(new_var, 0, ft_strlen(name) + ft_strlen(value) + 4);
+	ft_memset(new_var, 0, ft_strlen(name) + ft_strlen(value) + 2);
 	ft_strcat(new_var, name);
 	if ((value == NULL) && (ft_strchr(name, '=') == NULL))
 		return (new_var);
@@ -244,7 +245,7 @@ int	replace_env(t_master *master, char *name, char *value)
 		nlen = ft_strlen(name) - 1;
 	while (*env)
 	{
-		if ((ft_strncmp(*env, name, nlen) == 0) && (*env)[nlen] == '=')
+		if ((ft_strncmp(*env, name, nlen) == 0) && ((*env)[nlen] == '=' || (*env)[nlen] == '\0'))
 		{
 			if (value == NULL && ft_strchr(name, '='))
 			{
@@ -276,7 +277,8 @@ int	ft_export(t_master *master, char *name, char *value)
 	env_count = has_variable(master->environ, new_var, name);
 	if (!(env_count))
 		return (0);
-	new_environ = (char **)ft_realloc(master->environ, (env_count + 2)
+	new_environ = (char **)ft_realloc(master->environ, (sizeof(char **)
+				* ft_count_matriz(master->environ)), (env_count + 2)
 			* sizeof(char *));
 	if (new_environ == NULL)
 		return (free(new_var), (-1));

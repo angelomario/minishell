@@ -1,23 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   ft_isascii.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joandre <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 19:23:55 by joandre           #+#    #+#             */
-/*   Updated: 2024/10/22 19:48:24 by joandre          ###   ########.fr       */
+/*   Created: 2024/05/23 10:18:56 by joandre           #+#    #+#             */
+/*   Updated: 2024/05/23 10:18:58 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strcmp(char *s1, char *s2)
+#include "libft.h"
+
+char	*ft_strncat(char *dest, char *source, size_t dest_size)
 {
-	int i;
-	
+	size_t i;
+	size_t j;
+
+	if (!dest || !source || dest_size == 0)
+		return (NULL);
 	i = 0;
-	if (!s1 || !s2)
-		return (-1);
-	while (s1[i] && s2[i] && s1[i] == s2[i])
+	while (i < dest_size && dest[i])
 		i++;
-	return (s1[i] - s2[i]);
+	j = 0;
+	while (i + 1 < dest_size && source[j])
+		dest[i++] = source[j++];
+	if (i < dest_size)
+		dest[i] = '\0';
+	else if (dest_size > 0)
+		dest[dest_size - 1] = '\0';
+
+	return (dest);
 }

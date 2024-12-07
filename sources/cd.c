@@ -75,14 +75,14 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 			if (error_msg)
 			{
 				print_default_fd(master, error_msg);
-				free(error_msg);
 			}
 			printf("\n");
 		}
 	}
 	dir = getcwd(NULL, 0);
 	pwd = ft_strjoin("PWD=", dir);
-	return (ft_setenv(master, "PWD=", pwd), free(cwd), free(cmd), free(pwd), free(dir), 0);
+	return (ft_setenv(master, "PWD=", pwd), free(cwd), free(cmd), free(pwd),
+		free(dir), 0);
 }
 
 int	ft_cd(t_master *master, char **in)

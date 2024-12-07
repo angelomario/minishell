@@ -89,7 +89,6 @@ char	*expanded(t_master *master, char *imput)
 	j = 0;
 	in_single_quotes = 0;
 	in_double_quotes = 0;
-	(void)master;
 	while (imput[i])
 	{
 		if (imput[i] == '\'' && !in_double_quotes)
@@ -136,7 +135,7 @@ char	*expan_env(t_master *master, char *imput)
 			append_char(&master->output, &j, imput[i]);
 		i++;
 	}
-	return (master->output);
+	return (free(imput), master->output);
 }
 
 void	ft_flag_echo(char **s, int *i)

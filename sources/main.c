@@ -79,6 +79,7 @@ void	rm_void(char **mat)
 int	wait_prompt(t_master *master)
 {
 	char	*tmp;
+	char	*new_input;
 
 	tmp = readline("\033[32m> \033[0m");
 	if (!tmp)
@@ -86,9 +87,10 @@ int	wait_prompt(t_master *master)
 		exit(0);
 	}
 	str_replace_del(tmp, '|', 127);
-	master->imput = (char *)ft_realloc(master->imput, (ft_strlen(master->imput)
-				+ ft_strlen(tmp) + 1));
-	ft_strcat(master->imput, tmp);
+	new_input = ft_strjoin(master->imput, tmp);
+	free(master->imput);
+	free(tmp);
+	master->imput = new_input;
 	add_history(master->imput);
 	free_matriz(master->in);
 	master->in = ft_split(master->imput, 127);
@@ -106,9 +108,11 @@ int	wait_prompt(t_master *master)
 int	do_pipe(t_master *master)
 {
 	rm_void(master->in);
+	master->output = (char *)malloc(sizeof(char) * 1);
 	master->pid_child = fork();
 	if (master->pid_child == 0)
 	{
+		free(master->output);
 		signal(SIGINT, exit_130);
 		if ((ft_countchar(master->imput, 127) > 0)
 			&& (ft_countchar(master->imput,
@@ -144,10 +148,12 @@ int	validpipe(char *str)
 		if (str[i] == '|')
 		{
 			i++;
-			while (str[i] == ' ' || str[i] == '\t')
+			while (str[i] && (str[i] == ' ' || str[i] == '\t'))
 				i++;
 			if (str[i] == '|')
 				return (0);
+			else if (str[i] == '\0')
+				return (1);
 		}
 	}
 	return (1);
@@ -203,32 +209,6 @@ int	is_built_in(t_master *master, char **in)
 	return (42);
 }
 
-int	only_comands(t_master *master, char *input)
-{
-	int		built_in;
-	char	*tmp;
-
-	free_matriz(master->in);
-	format_imput(&input, 127);
-	tmp = expanded(master, input);
-	master->in = ft_split(tmp, 127);
-	free(tmp);
-	built_in = 42;
-	if (master->in && master->in[0])
-	{
-		built_in = is_built_in(master, master->in);
-		if (built_in == 42)
-		{
-			if ((master->pid_child = fork()) == 0)
-				ft_bin(master, master->in);
-			else
-				waitpid(master->pid_child, &master->status, 0);
-		}
-	}
-	printf("%d\n", master->status);
-	return (0);
-}
-
 int	ft_valid_args(char **in)
 {
 	int	i;
@@ -248,12 +228,14 @@ void	ft_aux_main(t_master *master)
 	if (!master->imput)
 	{
 		printf("exit\n");
-		ft_clean_master(master);
 		exit(0);
 	}
+	add_history(master->imput);
 	if (ft_strcmp(master->imput, "") == 0)
+	{
+		free(master->imput);
 		return ;
-	master->history = ft_strdup(master->imput);
+	}
 	master->imput = expan_env(master, master->imput);
 	trim_whitespace(master->imput);
 	if (its_ok(master->imput))
@@ -263,7 +245,9 @@ void	ft_aux_main(t_master *master)
 		master->in = ft_split(master->imput, 127);
 		if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
 					127)) && ft_valid_args(master->in))
+		{
 			do_pipe(master);
+		}
 		else
 		{
 			if (ft_redirect(master, master->imput) == -1)
@@ -271,7 +255,11 @@ void	ft_aux_main(t_master *master)
 		}
 	}
 	else
+	{
 		printf("Error\n");
+		master->output = (char *)malloc(sizeof(char) * 1);
+	}
+	ft_clean_master(master);
 }
 
 int	main(int ac, char **av, char **env)
@@ -282,6 +270,9 @@ int	main(int ac, char **av, char **env)
 	signal(SIGQUIT, SIG_IGN);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
+	master->history = NULL;
+	master->output = NULL;
+	master->in = NULL;
 	env = master->environ;
 	master->status = 0;
 	master->options = (char **)malloc(sizeof(char *) * 1);
@@ -293,6 +284,5 @@ int	main(int ac, char **av, char **env)
 		master->imput = readline("minishell% ");
 		ft_aux_main(master);
 	}
-	
-	return (ft_clean_master(master), 0);
+	return (0);
 }

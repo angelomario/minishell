@@ -37,7 +37,6 @@ typedef struct s_master
 	char	**in;
 	char	*history;
 	char	**environ;
-	char	***cmd;
 	int		stdin_fd;
 	int		stdout_fd;
 	int		status;
@@ -70,7 +69,8 @@ int			ft_env(t_master *master);
 int			ft_echo(char **in);
 int			ft_unset(t_master *master, char **str);
 void		ft_exit(t_master *master);
-void		*ft_realloc(void *ptr, size_t new_size);
+// void		*ft_realloc(void *ptr, size_t new_size);
+void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 int			ft_export(t_master *master, char *name, char *value);
 int			export(t_master *master, char **in);
 char		**ft_arrdup(char **environ);
@@ -114,4 +114,5 @@ void		str_replace_del(char *str, char target, char to_replace);
 int			ft_clean_master(t_master *master);
 char		*expan_env(t_master *master, char *imput);
 int			ft_clean_master(t_master *master);
+char		*ft_strncat(char *dest, char *source, size_t dest_size);
 #endif
