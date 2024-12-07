@@ -205,7 +205,7 @@ int	is_built_in(t_master *master, char **in)
 	else if (ft_strcmp(in[0], "echo") == 0)
 		return ((master->status = ft_echo(in)));
 	else if (ft_strcmp(in[0], "exit") == 0)
-		return (ft_exit(master), 0);
+		return (ft_exit(master, in), 0);
 	return (42);
 }
 

@@ -68,7 +68,7 @@ int			ft_cmd_built_ins(t_master *master);
 int			ft_env(t_master *master);
 int			ft_echo(char **in);
 int			ft_unset(t_master *master, char **str);
-void		ft_exit(t_master *master);
+int			ft_exit(t_master *master, char **in);
 // void		*ft_realloc(void *ptr, size_t new_size);
 void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 int			ft_export(t_master *master, char *name, char *value);
