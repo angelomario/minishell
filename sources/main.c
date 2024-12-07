@@ -81,11 +81,11 @@ int	wait_prompt(t_master *master)
 	char	*tmp;
 	char	*new_input;
 
-	tmp = readline("\033[32m> \033[0m");
+	tmp = readline("> ");
 	if (!tmp)
-	{
-		exit(0);
-	}
+		exit(2);
+	if (correct_pipes(tmp) == 0)
+		return (printf("Error\n"), free(tmp), free_matriz(master->in), exit(1), 1);
 	str_replace_del(tmp, '|', 127);
 	new_input = ft_strjoin(master->imput, tmp);
 	free(master->imput);
@@ -158,6 +158,24 @@ int	validpipe(char *str)
 	}
 	return (1);
 }
+int	correct_pipes(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str && str[i])
+	{
+		while (str[i] != '\0' && str[i] == ' ')
+			i++;
+		if (str[i] == '\0')
+			return (1);
+		if (str[i] == '|')
+			return (0);
+		else
+			return (1);
+	}
+	return (1);
+}
 
 int	its_ok(char *str)
 {
@@ -177,7 +195,7 @@ int	its_ok(char *str)
 	}
 	if (data.q_s || data.q_duo)
 		return (0);
-	return (validpipe(str));
+	return (validpipe(str) && correct_pipes(str));
 }
 
 int	is_built_in(t_master *master, char **in)
@@ -230,12 +248,13 @@ void	ft_aux_main(t_master *master)
 		printf("exit\n");
 		exit(0);
 	}
-	add_history(master->imput);
+	trim_whitespace(master->imput);
 	if (ft_strcmp(master->imput, "") == 0)
 	{
 		free(master->imput);
 		return ;
 	}
+	add_history(master->imput);
 	master->imput = expan_env(master, master->imput);
 	trim_whitespace(master->imput);
 	if (its_ok(master->imput))

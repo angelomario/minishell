@@ -40,7 +40,7 @@ $(DIR_LIB)/$(LIB):
 	@make -C $(DIR_LIB)
 
 $(NAME): $(DIR_LIB)/$(LIB) $(SRC_OBJ)
-	@$(CC) $(CFLAGS) -I$(INCLUDES) $(SRC_OBJ)  -o $(NAME) -L./$(DIR_LIB) -lft $(EXTERNAL) 
+	@$(CC) $(CFLAGS) -I$(INCLUDES) $(SRC_OBJ) -o $(NAME) -L./$(DIR_LIB) -lft $(EXTERNAL) 
 
 $(DIR_OBJ)/%.o: $(DIR)/%.c
 	@$(MK) $(DIR_OBJ)
