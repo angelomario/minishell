@@ -12,43 +12,47 @@
 
 #include "minishell.h"
 
-void	append_char(char **output, int *j, char c)
+int ft_isalnum_more(int c)
 {
-	char	*temp;
-
-	temp = malloc(*j + 2);
-	if (!temp)
-		return ;
-	if (*output)
-	{
-		ft_strcpy(temp, *output);
-		free(*output);
-	}
-	temp[*j] = c;
-	temp[*j + 1] = '\0';
-	*output = temp;
-	(*j)++;
+    if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122)
+        || c == '_')
+        return (1);
+    else
+        return (0);
 }
-
-void	append_str(char **output, int *j, char *str)
+void    append_char(char **output, int *j, char c)
 {
-	int		len;
-	char	*temp;
-
-	len = ft_strlen(str);
-	temp = malloc(*j + len + 1);
-	if (!temp)
-		return ;
-	if (*output)
-	{
-		ft_strcpy(temp, *output);
-		free(*output);
-	}
-	ft_strcpy(&temp[*j], str);
-	*output = temp;
-	*j += len;
+    char    *temp;
+    temp = malloc(*j + 2);
+    if (!temp)
+        return ;
+    if (*output)
+    {
+        ft_strcpy(temp, *output);
+        free(*output);
+    }
+    temp[*j] = c;
+    temp[*j + 1] = '\0';
+    *output = temp;
+    (*j)++;
 }
-
+void    append_str(char **output, int *j, char *str)
+{
+    int     len;
+    char    *temp;
+    len = ft_strlen(str);
+    temp = malloc(*j + len + 1);
+    if (!temp)
+        return ;
+    if (*output)
+    {
+        ft_strcpy(temp, *output);
+        free(*output);
+    }
+    ft_strcpy(&temp[*j], str);
+    *output = temp;
+    *j += len;
+}
 void    process_var(char *input, int *i, t_master *master, int *j)
 {
     t_data  data;
@@ -58,11 +62,6 @@ void    process_var(char *input, int *i, t_master *master, int *j)
         data.value = ft_itoa(master->status);
         append_str(&master->output, j, data.value);
         free(data.value);
-    }
-    else if (input[data.var_start] == '$')
-    {
-        ft_putchar_fd('$', 1);
-        (*i)--;
     }
     else
     {
@@ -76,66 +75,58 @@ void    process_var(char *input, int *i, t_master *master, int *j)
         (*i)--;
     }
 }
-
-char	*expanded(t_master *master, char *imput)
+char    *expanded(t_master *master, char *imput)
 {
-	int	i;
-	int	j;
-	int	in_single_quotes;
-	int	in_double_quotes;
-
-	master->output = NULL;
-	i = 0;
-	j = 0;
-	in_single_quotes = 0;
-	in_double_quotes = 0;
-	while (imput[i])
-	{
-		if (imput[i] == '\'' && !in_double_quotes)
-			in_single_quotes = !in_single_quotes;
-		else if (imput[i] == '"' && !in_single_quotes)
-			in_double_quotes = !in_double_quotes;
-		else if (imput[i] == '$' && (imput[i + 1] != '\0' && imput[i + 1] != ' ')
-			&& !in_single_quotes)
-			process_var(imput, &i, master, &j);
-		else
-			append_char(&master->output, &j, imput[i]);
-		i++;
-	}
-	return (master->output);
+    int     i;
+    int     j;
+    t_data  data;
+    master->output = NULL;
+    i = 0;
+    j = 0;
+    data.q_s = 0;
+    data.q_duo = 0;
+    while (imput[i])
+    {
+        if (imput[i] == '\'' && !data.q_duo)
+            data.q_s = !data.q_s;
+        else if (imput[i] == '"' && !data.q_s)
+            data.q_duo = !data.q_duo;
+        else if (imput[i] == '$' && (imput[i + 1] != '\0'
+                && ft_isalnum_more(imput[i + 1])) && !data.q_s)
+        {
+            process_var(imput, &i, master, &j);
+        }
+        else
+            append_char(&master->output, &j, imput[i]);
+        i++;
+    }
+    return (master->output);
 }
-
-char	*expan_env(t_master *master, char *imput)
+char    *expan_env(t_master *master, char *imput)
 {
-	int	i;
-	int	j;
-	int	in_single_quotes;
-	int	in_double_quotes;
-
-	master->output = NULL;
-	i = 0;
-	j = 0;
-	in_single_quotes = 0;
-	in_double_quotes = 0;
-	while (imput[i])
-	{
-		if (imput[i] == '\'' && !in_double_quotes)
-		{
-			in_single_quotes = !in_single_quotes;
-			append_char(&master->output, &j, imput[i]);
-		}
-		else if (imput[i] == '"' && !in_single_quotes)
-		{
-			in_double_quotes = !in_double_quotes;
-			append_char(&master->output, &j, imput[i]);
-		}
-		else if (imput[i] == '$' && (imput[i + 1] != '\0' && imput[i + 1] != ' '))
-			process_var(imput, &i, master, &j);
-		else
-			append_char(&master->output, &j, imput[i]);
-		i++;
-	}
-	return (free(imput), master->output);
+    t_data  s;
+    master->output = NULL;
+    s = (t_data){0, 0, 0, 0, 0, NULL, 0, NULL, {0}, NULL, NULL, NULL, NULL};
+    while (imput[s.i])
+    {
+        if (imput[s.i] == '\'' && !s.q_duo)
+        {
+            s.q_s = !s.q_s;
+            append_char(&master->output, &s.j, imput[s.i]);
+        }
+        else if (imput[s.i] == '"' && !s.q_s)
+        {
+            s.q_duo = !s.q_duo;
+            append_char(&master->output, &s.j, imput[s.i]);
+        }
+        else if (imput[s.i] == '$' && (imput[s.i + 1] != '\0'
+                && ft_isalnum_more(imput[s.i + 1])) && !s.q_s)
+            process_var(imput, &s.i, master, &s.j);
+        else
+            append_char(&master->output, &s.j, imput[s.i]);
+        s.i++;
+    }
+    return (free(imput), master->output);
 }
 
 void	ft_flag_echo(char **s, int *i)

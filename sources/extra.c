@@ -119,36 +119,36 @@ int	ft_countrp(char *str, char *to_find)
 	return (j);
 }
 
-char	*ft_slice(char *str, char ch)
-{
-	int		i;
-	int		start;
-	int		end;
-	int		j;
-	char	*tmp;
+// char	*ft_slice(char *str, char ch)
+// {
+// 	int		i;
+// 	int		start;
+// 	int		end;
+// 	int		j;
+// 	char	*tmp;
 
-	i = -1;
-	start = -1;
-	end = -1;
-	j = 0;
-	while (str[++i])
-		if (str[i] == ch)
-			start = i;
-	i = ft_strlen(str);
-	while (str[--i])
-		if (str[i] == ch)
-			end = i;
-	if (start < 0 || end < 0 || start == end)
-		return (str);
-	i = -1;
-	tmp = (char *)malloc(sizeof(char) * (ft_strlen(str) - 1));
-	while (str[++i])
-		if (i != end && i != start)
-			tmp[j++] = str[i];
-	tmp[j] = '\0';
-	// free(str);
-	return (tmp);
-}
+// 	i = -1;
+// 	start = -1;
+// 	end = -1;
+// 	j = 0;
+// 	while (str[++i])
+// 		if (str[i] == ch)
+// 			start = i;
+// 	i = ft_strlen(str);
+// 	while (str[--i])
+// 		if (str[i] == ch)
+// 			end = i;
+// 	if (start < 0 || end < 0 || start == end)
+// 		return (str);
+// 	i = -1;
+// 	tmp = (char *)malloc(sizeof(char) * (ft_strlen(str) - 1));
+// 	while (str[++i])
+// 		if (i != end && i != start)
+// 			tmp[j++] = str[i];
+// 	tmp[j] = '\0';
+// 	// free(str);
+// 	return (tmp);
+// }
 
 void	ft_concert_env(t_master *master)
 {
@@ -179,15 +179,15 @@ char	*remove_if_even(char *str, char ch)
 	{
 		j = 0;
 		i = -1;
+		tmp = NULL;
 		tmp = (char *)malloc(sizeof(char) * ft_strlen(str) - count + 1);
-		ft_memset(tmp, 0, ft_strlen(tmp));
 		while (str[++i])
 		{
 			if (str[i] != ch)
 				tmp[j++] = str[i];
 		}
 		tmp[j] = '\0';
-		return (free(str), tmp);
+		return (tmp);
 	}
 	return (str);
 }

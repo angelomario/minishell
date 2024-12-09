@@ -50,12 +50,16 @@ typedef struct s_data
 	int		i;
 	int		j;
 	int		len;
-	char	*imput;
 	int		q_duo;
 	int		q_s;
+	char	*imput;
 	int		var_start;
 	char	*value;
 	char	var_name[100];
+	char	*oldpwd;
+	char	*pwd;
+	char	*dir;
+	char	*error_msg;
 }			t_data;
 
 // char	**ft_split(char const *s, char c);

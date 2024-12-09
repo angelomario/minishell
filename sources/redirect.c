@@ -87,6 +87,8 @@ int	redir_input(char *filename, int flag)
 	(void)flag;
 	if (!filename)
 		return (-1);
+	filename = remove_if_even(filename, '\"');
+	filename = remove_if_even(filename, '\'');
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		return (-1);
@@ -106,6 +108,8 @@ int	redir_output(char *name, int append)
 
 	if (!name)
 		return (-1);
+	name = remove_if_even(name, '\"');
+	name = remove_if_even(name, '\'');
 	if (append)
 		fd = open(name, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else
@@ -145,18 +149,24 @@ int	to_configure(t_master *master, char *param, int flag, int (*f)(char *, int))
 	int		i;
 	char	**mat;
 
-	mat = ft_split(param, ' ');
+	if (ft_strcmp(param, "\"\"") == 0)
+	{
+		print_default_fd(master,
+			ft_strdup("bash: : No such file or directory\n"));
+		return (-1);
+	}
+	format_imput(&param, 127);
+	mat = ft_split(param, 127);
 	i = 1;
-	(void)flag;
-	(void)f;
 	if (f(mat[0], flag) == -1)
-		return (free_matriz(mat), -1);
+		return (print_default_fd(master, ft_strjoin("bash: ", param)),
+			print_default_fd(master,
+				ft_strdup(": No such file or directory\n")), free_matriz(mat),
+			-1);
 	if (ft_count_matriz(mat) > 1)
 	{
 		while (mat[i])
-		{
 			master->options = add_str(master->options, mat[i++]);
-		}
 	}
 	free_matriz(mat);
 	return (0);
@@ -172,21 +182,21 @@ int	configure(t_master *master, char **in)
 	while (in[i])
 	{
 		if (ft_strcmp(in[i], ">") == 0 && in[i + 1] != NULL)
-			to_configure(master, in[++i], 0, redir_output);
+		{
+			if (to_configure(master, in[i + 1], 0, redir_output) == -1)
+				exit(127);
+		}
 		else if (ft_strcmp(in[i], ">>") == 0 && in[i + 1] != NULL)
-			to_configure(master, in[++i], 1, redir_output);
+		{
+			if (to_configure(master, in[i + 1], 1, redir_output) == -1)
+				exit(127);
+		}
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
 		{
-			if (to_configure(master, in[++i], 0, redir_input) == -1)
-			{
-				print_default_fd(master, ft_strjoin("bash: ", in[i]));
-				print_default_fd(master,
-					ft_strdup(": No such file or directory\n"));
+			if (to_configure(master, in[i + 1], 0, redir_input) == -1)
 				exit(127);
-			}
 		}
-		else
-			i++;
+		i++;
 	}
 	return (0);
 }
@@ -258,6 +268,8 @@ int	do_redirect(t_master *master, char **in)
 		free(master->output);
 		do_heredoc(master, in);
 		configure(master, in);
+		if (is_redirect(in[0]) && ft_count_matriz(master->options) >= 1)
+			ft_memset(in[0], ' ', ft_strlen(in[0]));
 		format_imput(&in[0], 127);
 		tmp = expanded(master, in[0]);
 		command = concatmatrix(master, ft_split(tmp, 127), master->options);

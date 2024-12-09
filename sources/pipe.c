@@ -14,6 +14,11 @@
 
 int	cur_instruction(t_master *master, int pipefd[2], int input_fd, char **input)
 {
+	if (ft_strcmp(*input, "\"\"") == 0)
+	{
+		return (print_default_fd(master,
+				ft_strdup("bash: : command not found\n")), exit(127), 0);
+	}
 	if (input_fd != STDIN_FILENO)
 	{
 		if (dup2(input_fd, STDIN_FILENO) == -1)
@@ -45,7 +50,7 @@ int	reset_fd(t_master *master, int pipefd[2], int *input_fd)
 	}
 	else
 	{
-		dup2(*input_fd , STDIN_FILENO);
+		dup2(*input_fd, STDIN_FILENO);
 	}
 	return (0);
 }

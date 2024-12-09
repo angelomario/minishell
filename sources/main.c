@@ -76,6 +76,18 @@ void	rm_void(char **mat)
 	}
 }
 
+int	currect_tmp(char *tmp)
+{
+	int	i;
+
+	i = 0;
+	if (ft_strcmp(tmp, "") == 0)
+		return (0);
+	while (tmp[i] && (tmp[i] == ' ' || tmp[i] == '\t'))
+		i++;
+	return (tmp[i] != '\0');
+}
+
 int	wait_prompt(t_master *master)
 {
 	char	*tmp;
@@ -85,13 +97,16 @@ int	wait_prompt(t_master *master)
 	if (!tmp)
 		exit(2);
 	if (correct_pipes(tmp) == 0)
-		return (printf("Error\n"), free(tmp), free_matriz(master->in), exit(1), 1);
+		return (printf("Error\n"), free(tmp), free_matriz(master->in), exit(1),
+			1);
+	if (!currect_tmp(tmp))
+		return (free(tmp), wait_prompt(master));
+	add_history(tmp);
 	str_replace_del(tmp, '|', 127);
 	new_input = ft_strjoin(master->imput, tmp);
 	free(master->imput);
 	free(tmp);
 	master->imput = new_input;
-	add_history(master->imput);
 	free_matriz(master->in);
 	master->in = ft_split(master->imput, 127);
 	rm_void(master->in);
@@ -241,24 +256,18 @@ int	ft_valid_args(char **in)
 	return (1);
 }
 
-void	ft_aux_main(t_master *master)
+int	ft_aux_main(t_master *master)
 {
 	if (!master->imput)
-	{
-		printf("exit\n");
-		exit(0);
-	}
+		return (printf("exit\n"), exit(0), 0);
 	trim_whitespace(master->imput);
 	if (ft_strcmp(master->imput, "") == 0)
-	{
-		free(master->imput);
-		return ;
-	}
+		return (free(master->imput), 0);
 	add_history(master->imput);
-	master->imput = expan_env(master, master->imput);
-	trim_whitespace(master->imput);
-	if (its_ok(master->imput))
+	if (its_ok(master->imput) && (ft_strcmp(master->imput, "\"\"") != 0))
 	{
+		master->imput = expan_env(master, master->imput);
+		trim_whitespace(master->imput);
 		str_replace_del(&master->imput[0], '|', 127);
 		trim_whitespace(master->imput);
 		master->in = ft_split(master->imput, 127);
@@ -270,7 +279,7 @@ void	ft_aux_main(t_master *master)
 		else
 		{
 			if (ft_redirect(master, master->imput) == -1)
-				return ;
+				return (0);
 		}
 	}
 	else
@@ -278,7 +287,7 @@ void	ft_aux_main(t_master *master)
 		printf("Error\n");
 		master->output = (char *)malloc(sizeof(char) * 1);
 	}
-	ft_clean_master(master);
+	return (ft_clean_master(master), 0);
 }
 
 int	main(int ac, char **av, char **env)
