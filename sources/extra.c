@@ -158,18 +158,18 @@ void	ft_concert_env(t_master *master)
 	while (*env)
 	{
 		remove_if_even(*env, '"');
-		remove_if_even(*env, '\'');
 		env++;
 	}
 }
 
 char	*remove_if_even(char *str, char ch)
 {
-	int		count;
-	char	*tmp;
-	int		i;
-	int		j;
+	int	count;
+	int	i;
+	int	j;
 
+	if (!str)
+		return (NULL);
 	count = 0;
 	i = -1;
 	while (str[++i])
@@ -177,17 +177,15 @@ char	*remove_if_even(char *str, char ch)
 			count++;
 	if (count % 2 == 0 && count > 1)
 	{
+		i = 0;
 		j = 0;
-		i = -1;
-		tmp = NULL;
-		tmp = (char *)malloc(sizeof(char) * ft_strlen(str) - count + 1);
-		while (str[++i])
+		while (str[i])
 		{
 			if (str[i] != ch)
-				tmp[j++] = str[i];
+				str[j++] = str[i];
+			i++;
 		}
-		tmp[j] = '\0';
-		return (tmp);
+		str[j] = '\0';
 	}
 	return (str);
 }

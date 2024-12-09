@@ -125,7 +125,6 @@ int	do_export(t_master *master, char *in)
 
 	i = 0;
 	in = remove_if_even(in, '\"');
-	in = remove_if_even(in, '\'');
 	name = get_name(in);
 	if ((ft_strchr(in, '=')) == NULL)
 		i = ft_export(master, name, NULL);
