@@ -12,13 +12,13 @@
 
 #include "minishell.h"
 
-int	ft_isalnum_more(int c)
+int ft_isalnum_more(int c)
 {
-	if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122)
-		|| c == '_')
-		return (1);
-	else
-		return (0);
+    if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122)
+        || c == '_' || c == '?')
+        return (1);
+    else
+        return (0);
 }
 
 void	str_replace_all(char *str, char target, char to_replace)

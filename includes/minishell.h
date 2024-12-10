@@ -28,7 +28,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-// int	*pid_address;
 
 typedef struct s_master
 {

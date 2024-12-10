@@ -12,8 +12,11 @@
 
 #include "minishell.h"
 
+extern volatile sig_atomic_t g_sig;
+
 void	exit_130(int sig)
 {
+	g_sig = sig;
 	if (sig == SIGINT)
 	{
 		write(1, "\n", 1);
@@ -23,7 +26,7 @@ void	exit_130(int sig)
 
 void	sigint_handler(int sig)
 {
-	(void)sig;
+	g_sig = sig;
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -50,6 +53,6 @@ int	kill_proccess(int pid, char *del, int stdout)
 
 void	breaker(int	sig)
 {
-	(void)sig;
+	g_sig = sig;
 	write(1, "\n", 1);
 }

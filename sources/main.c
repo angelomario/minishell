@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_sig = 0;
+
 int	ft_countchar(char *str, char ch)
 {
 	int	i;
@@ -95,7 +97,7 @@ int	wait_prompt(t_master *master)
 
 	tmp = readline("> ");
 	if (!tmp)
-		exit(2);
+		return (g_sig = SIGQUIT, exit(42), 0);
 	if (correct_pipes(tmp) == 0)
 		return (printf("Error\n"), free(tmp), free_matriz(master->in), exit(1),
 			1);
@@ -148,6 +150,7 @@ int	do_pipe(t_master *master)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(master->pid_child, &master->status, 0);
+		master->status = WEXITSTATUS(master->status);
 		signal(SIGINT, sigint_handler);
 	}
 	return (0);
@@ -155,12 +158,19 @@ int	do_pipe(t_master *master)
 
 int	validpipe(char *str)
 {
-	int	i;
+	int		i;
+	t_data	s;
 
+	s.q_duo = 0;
+	s.q_s = 0;
 	i = -1;
 	while (str && str[++i])
 	{
-		if (str[i] == '|')
+		if (str[i] == '"' && !s.q_s)
+			s.q_duo = !s.q_duo;
+		else if (str[i] == '\'' && !s.q_duo)
+			s.q_s = !s.q_s;
+		else if (str[i] == '|' && !s.q_s && !s.q_duo)
 		{
 			i++;
 			while (str[i] && (str[i] == ' ' || str[i] == '\t'))
@@ -291,6 +301,18 @@ int	ft_aux_main(t_master *master)
 	return (ft_clean_master(master), 0);
 }
 
+void	process_signal(t_master *master)
+{
+	if (g_sig == SIGINT)
+		master->status = 130;
+	if (master->status == 42)
+	{
+		print_default_fd(master, ft_strdup("exit\n"));
+		exit(2);
+	}
+	g_sig = 42;
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
@@ -311,15 +333,18 @@ int	main(int ac, char **av, char **env)
 	while (1 && av && ac)
 	{
 		master->imput = readline("minishell% ");
+		process_signal(master);
 		if (master->imput)
 			trim_whitespace(master->imput);
-		if (!((ft_strcmp(master->imput, "\"\"") == 0) || (ft_strcmp(master->imput, "\'\'") == 0)))
+		if (!((ft_strcmp(master->imput, "\"\"") == 0)
+				|| (ft_strcmp(master->imput, "\'\'") == 0)))
 			ft_aux_main(master);
 		else
 		{
 			printf("command not found: \'\'\n");
 			free(master->imput);
 		}
+		process_signal(master);
 	}
 	return (0);
 }

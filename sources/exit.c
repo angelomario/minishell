@@ -76,7 +76,10 @@ int	ft_exit(t_master *master, char **in)
 		{
 			free_matriz(master->in);
 			free(master->imput);
-			exit(str_true(in[1]));
+			if (str_true(in[1]) == 0)
+				exit(ft_atoi(in[1]));
+			else
+				exit(0);
 		}
 		else if (ft_count_matriz(in) == 1)
 		{

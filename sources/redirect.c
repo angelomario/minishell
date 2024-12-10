@@ -356,8 +356,7 @@ int	only_cmd(t_master *master, char *tmp, char **in)
 		{
 			signal(SIGINT, breaker);
 			waitpid(master->pid_child, &master->status, 0);
-			if (WIFEXITED(master->status))
-				master->status = WEXITSTATUS(master->status);
+			master->status = WEXITSTATUS(master->status);
 			signal(SIGINT, sigint_handler);
 		}
 	}
