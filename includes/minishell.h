@@ -120,4 +120,5 @@ char		*expan_env(t_master *master, char *imput);
 int			ft_clean_master(t_master *master);
 char		*ft_strncat(char *dest, char *source, size_t dest_size);
 int			correct_pipes(char *str);
+void		ft_replace_c(char *s);
 #endif

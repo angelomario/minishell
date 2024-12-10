@@ -17,7 +17,7 @@ void	exit_130(int sig)
 	if (sig == SIGINT)
 	{
 		write(1, "\n", 1);
-		exit(1);
+		exit(130);
 	}
 }
 

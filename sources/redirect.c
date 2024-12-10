@@ -302,24 +302,45 @@ int	is_redirect(char *str)
 	return (0);
 }
 
-// int	is_heredoc(char **in)
-// {
-// 	int	i;
+int	is_red(char *str)
+{
+	if (!str)
+		return (0);
+	if (ft_strlen(str) >= 2)
+	{
+		if ((str[0] == '>') && (str[1] == '>'))
+			return (1);
+		else if ((str[0] == '<') && (str[1] == '<'))
+			return (1);
+	}
+	if (str[0] == '<')
+		return (1);
+	if (str[0] == '>')
+		return (1);
+	return (0);
+}
 
-// 	i = 0;
-// 	while (in[i])
-// 	{
-// 		if ((ft_strcmp(in[i], "<<") == 0))
-// 			return (1);
-// 		i++;
-// 	}
-// 	return (0);
-// }
+void	ft_replace_c(char *s)
+{
+	int i = 0;
+	if ((ft_strncmp(s, "\"\"", 2) == 0 || ft_strncmp(s, "\'\'", 2)== 0) && (s[2] == ' ' || is_red(&s[2])))
+	{
+		while ((s[i] == '"' || s[i] == '\'') && s[i] )
+		{
+			if (s[i] == '"')
+				s[i] = 20;
+			if (s[i] == '\'')
+				s[i] = 21;
+			i++;
+		}
+	}
+}
 
 int	only_cmd(t_master *master, char *tmp, char **in)
 {
 	free_matriz(in);
 	format_imput(&tmp, 127);
+	ft_replace_c(tmp);
 	tmp = expanded(master, tmp);
 	in = ft_split(tmp, 127);
 	if ((is_built_in(master, in) == 42) && (!is_redirect(in[0])

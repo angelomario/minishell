@@ -118,6 +118,8 @@ char	*expanded(t_master *master, char *imput)
 			append_char(&master->output, &j, imput[i]);
 		i++;
 	}
+	str_replace_all(master->output, 20, '"');
+	str_replace_all(master->output, 21, '\'');
 	str_replace_all(master->output, 27, '\'');
 	return (master->output);
 }

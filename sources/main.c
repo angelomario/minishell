@@ -264,9 +264,10 @@ int	ft_aux_main(t_master *master)
 	if (ft_strcmp(master->imput, "") == 0)
 		return (free(master->imput), 0);
 	add_history(master->imput);
-	if (its_ok(master->imput) && (ft_strcmp(master->imput, "\"\"") != 0))
+	if (its_ok(master->imput))
 	{
 		master->imput = expan_env(master, master->imput);
+		ft_replace_c(master->imput);
 		trim_whitespace(master->imput);
 		str_replace_del(&master->imput[0], '|', 127);
 		trim_whitespace(master->imput);
@@ -310,7 +311,15 @@ int	main(int ac, char **av, char **env)
 	while (1 && av && ac)
 	{
 		master->imput = readline("minishell% ");
-		ft_aux_main(master);
+		if (master->imput)
+			trim_whitespace(master->imput);
+		if (!((ft_strcmp(master->imput, "\"\"") == 0) || (ft_strcmp(master->imput, "\'\'") == 0)))
+			ft_aux_main(master);
+		else
+		{
+			printf("command not found: \'\'\n");
+			free(master->imput);
+		}
 	}
 	return (0);
 }

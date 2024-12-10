@@ -14,6 +14,7 @@
 
 int	cur_instruction(t_master *master, int pipefd[2], int input_fd, char **input)
 {
+	ft_replace_c(*input);
 	if (ft_strcmp(*input, "\"\"") == 0)
 	{
 		return (print_default_fd(master,
@@ -59,7 +60,7 @@ int	ft_pipe(t_master *master)
 {
 	int	pipefd[2];
 	int	input_fd;
-	int	pid;
+	int	pid[ft_count_matriz(master->in)];
 	int	i;
 
 	input_fd = dup(STDIN_FILENO);
@@ -69,17 +70,18 @@ int	ft_pipe(t_master *master)
 		if (master->in[i + 1] != NULL)
 			if (pipe(pipefd) == -1)
 				return (perror("Pipe"), -1);
-		pid = fork();
-		if (pid == -1)
+		pid[i] = fork();
+		if (pid[i] == -1)
 			return (perror("Fork"), -1);
-		if (pid == 0)
+		if (pid[i] == 0)
 			cur_instruction(master, pipefd, input_fd, &master->in[i]);
 		else
-		{
 			reset_fd(master, pipefd, &input_fd);
-			waitpid(pid, &master->status, 0);
-			master->status = WEXITSTATUS(master->status);
-		}
+	}
+	while (i-- != 0)
+	{
+		waitpid(pid[i], &master->status, 0);
+		master->status = WEXITSTATUS(master->status);
 	}
 	return (0);
 }
