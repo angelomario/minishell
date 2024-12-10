@@ -31,10 +31,8 @@ static char	**ft_sep_words(char **strs, int size, char *s, char *delimiter)
 			count += ft_strlen(delimiter);
 		temp = count;
 		while (s[temp] != '\0' && !is_delimiter(&s[temp], delimiter))
-			// Encontra o fim da palavra
 			temp++;
 		strs[c_word] = malloc((temp - count + 1) * sizeof(char));
-		// Aloca memória para a palavra
 		if (strs[c_word] == NULL)
 			return (NULL);
 		ft_memcpy((void *)strs[c_word], (void *)&s[count], temp - count);
@@ -42,15 +40,15 @@ static char	**ft_sep_words(char **strs, int size, char *s, char *delimiter)
 		count = temp;
 		c_word++;
 	}
-	strs[c_word] = NULL; // Termina o array com NULL
+	strs[c_word] = NULL;
 	return (strs);
 }
 
 char	**ft_strsplit(char *s, char *delimiter)
 {
-	char **strs;
-	int pos;
-	int size;
+	char	**strs;
+	int		pos;
+	int		size;
 
 	pos = 0;
 	size = 0;
@@ -58,18 +56,17 @@ char	**ft_strsplit(char *s, char *delimiter)
 		return (NULL);
 	while (s[pos] != '\0')
 	{
-		if (is_delimiter(&s[pos], delimiter)) // Se encontrar o delimitador
+		if (is_delimiter(&s[pos], delimiter))
 		{
-			size++;                      // Conta o número de palavras
-			pos += ft_strlen(delimiter); // Avança pelo delimitador
+			size++;
+			pos += ft_strlen(delimiter);
 		}
 		else
-			pos++; // Continua na string
+			pos++;
 	}
 	if (s[pos - 1] != '\0')
 		size++;
 	strs = (char **)malloc((size + 1) * sizeof(char *));
-	// Aloca memória para as palavras
 	if (strs == NULL)
 		return (NULL);
 	return (ft_sep_words(strs, size, (char *)s, delimiter));

@@ -59,11 +59,9 @@ int	reset_fd(t_master *master, int pipefd[2], int *input_fd)
 int	ft_pipe(t_master *master)
 {
 	int	pipefd[2];
-	int	input_fd;
 	int	pid[ft_count_matriz(master->in)];
 	int	i;
 
-	input_fd = dup(STDIN_FILENO);
 	i = -1;
 	while (master->in[++i] != NULL)
 	{
@@ -74,9 +72,9 @@ int	ft_pipe(t_master *master)
 		if (pid[i] == -1)
 			return (perror("Fork"), -1);
 		if (pid[i] == 0)
-			cur_instruction(master, pipefd, input_fd, &master->in[i]);
+			cur_instruction(master, pipefd, master->stdin_fd, &master->in[i]);
 		else
-			reset_fd(master, pipefd, &input_fd);
+			reset_fd(master, pipefd, &master->stdin_fd);
 	}
 	while (i-- != 0)
 	{

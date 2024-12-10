@@ -55,7 +55,7 @@ void	trim_whitespace(char *str)
 	while (end > start && *end == ' ')
 		end--;
 	*(end + 1) = '\0';
-	ft_memmove(str, start, end - start + 2); // +2 para incluir o '\0'
+	ft_memmove(str, start, end - start + 2);
 }
 
 char	*getdel(char *input, char del, int *pos)

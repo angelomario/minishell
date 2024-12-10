@@ -15,6 +15,18 @@
 // Here is command unset behavior
 // This command removes enviroment variable by actual running proccess
 
+int	compare(char **next_env)
+{
+	free(*next_env);
+	while (*(next_env + 1) != NULL)
+	{
+		*next_env = *(next_env + 1);
+		next_env++;
+	}
+	*next_env = NULL;
+	return (0);
+}
+
 int	ft_unset(t_master *master, char **str)
 {
 	char	**env;
@@ -32,13 +44,7 @@ int	ft_unset(t_master *master, char **str)
 					|| ft_strlen(*env) == ft_strlen(*str)))
 			{
 				next_env = env;
-				free(*next_env);
-				while (*(next_env + 1) != NULL)
-				{
-					*next_env = *(next_env + 1);
-					next_env++;
-				}
-				*next_env = NULL;
+				compare(next_env);
 			}
 			env++;
 		}

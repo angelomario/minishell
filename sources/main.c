@@ -97,8 +97,8 @@ int	wait_prompt(t_master *master)
 
 	tmp = readline("> ");
 	if (!tmp)
-		return (g_sig = SIGQUIT, exit(42), 0);
-	if (correct_pipes(tmp) == 0)
+		exit(42);
+	if (correct_pipes(tmp) == 0 || validpipe(tmp) == 0)
 		return (printf("Error\n"), free(tmp), free_matriz(master->in), exit(1),
 			1);
 	if (!currect_tmp(tmp))
@@ -111,7 +111,6 @@ int	wait_prompt(t_master *master)
 	master->imput = new_input;
 	free_matriz(master->in);
 	master->in = ft_split(master->imput, 127);
-	rm_void(master->in);
 	if (!validpipe(master->imput))
 		return (1);
 	if ((ft_countchar(master->imput, 127) > 0) && (ft_countchar(master->imput,
@@ -133,16 +132,11 @@ int	do_pipe(t_master *master)
 			&& (ft_countchar(master->imput,
 					127) >= ft_count_matriz(master->in)))
 		{
-			if (wait_prompt(master))
-			{
-				return (printf("bash: syntax error near unexpected token `|'\n"),
-					1);
-			}
+			wait_prompt(master);
 			if (!its_ok(master->imput))
 				return (printf("Error\n"), 1);
 		}
-		ft_pipe(master);
-		exit(0);
+		return (ft_pipe(master), exit(0), 0);
 	}
 	else
 	{
@@ -264,6 +258,21 @@ int	ft_valid_args(char **in)
 	return (1);
 }
 
+int	ft_find_way(t_master *master)
+{
+	if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, 127))
+		&& ft_valid_args(master->in))
+	{
+		do_pipe(master);
+	}
+	else
+	{
+		if (ft_redirect(master, master->imput) == -1)
+			return (-1);
+	}
+	return (0);
+}
+
 int	ft_aux_main(t_master *master)
 {
 	if (!master->imput)
@@ -280,16 +289,8 @@ int	ft_aux_main(t_master *master)
 		str_replace_del(&master->imput[0], '|', 127);
 		trim_whitespace(master->imput);
 		master->in = ft_split(master->imput, 127);
-		if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput,
-					127)) && ft_valid_args(master->in))
-		{
-			do_pipe(master);
-		}
-		else
-		{
-			if (ft_redirect(master, master->imput) == -1)
-				return (0);
-		}
+		if (ft_find_way(master) == -1)
+			return (0);
 	}
 	else
 	{

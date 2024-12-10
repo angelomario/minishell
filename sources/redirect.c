@@ -12,31 +12,6 @@
 
 #include "minishell.h"
 
-// int	creat_file(char *name, char **msg, int append)
-// {
-// 	int	fd;
-// 	int	default_fd;
-
-// 	default_fd = STDOUT_FILENO;
-// 	if (!name)
-// 		return (-1);
-// 	if (append)
-// 		fd = open(name, O_CREAT | O_WRONLY | O_APPEND, 0644);
-// 	else
-// 		fd = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-// 	if (fd < 0)
-// 		return (perror("Erro ao abrir o arquivo"), -1);
-// 	// Redireciona stdout
-// 	dup2(fd, STDOUT_FILENO);
-// 	// Redireciona stderr
-// 	dup2(fd, STDERR_FILENO);
-// 	while (msg && *msg)
-// 		printf("%s", *msg++);
-// 	close(fd);
-// 	dup2(default_fd, STDOUT_FILENO);
-// 	return (0);
-// }
-
 char	*ft_check_type_redir(char *type_redir)
 {
 	char	*redir[5];
@@ -256,6 +231,15 @@ char	**concatmatrix(t_master *master, char **mat1, char **mat2)
 	return (mat1);
 }
 
+int	wait_sons(t_master *master)
+{
+	signal(SIGINT, SIG_IGN);
+	waitpid(master->pid_child, &master->status, 0);
+	master->status = WEXITSTATUS(master->status);
+	signal(SIGINT, sigint_handler);
+	return (0);
+}
+
 int	do_redirect(t_master *master, char **in)
 {
 	char	*tmp;
@@ -276,18 +260,11 @@ int	do_redirect(t_master *master, char **in)
 		free(tmp);
 		if (is_built_in(master, command) == 42 && (!is_redirect(in[0])
 				|| ((ft_count_matriz(in) < 2))))
-		{
 			ft_bin(master, command);
-		}
 		exit(0);
 	}
 	else
-	{
-		signal(SIGINT, SIG_IGN);
-		waitpid(master->pid_child, &master->status, 0);
-		master->status = WEXITSTATUS(master->status);
-		signal(SIGINT, sigint_handler);
-	}
+		wait_sons(master);
 	return (0);
 }
 
@@ -322,10 +299,13 @@ int	is_red(char *str)
 
 void	ft_replace_c(char *s)
 {
-	int i = 0;
-	if ((ft_strncmp(s, "\"\"", 2) == 0 || ft_strncmp(s, "\'\'", 2)== 0) && (s[2] == ' ' || is_red(&s[2])))
+	int	i;
+
+	i = 0;
+	if ((ft_strncmp(s, "\"\"", 2) == 0 || ft_strncmp(s, "\'\'", 2) == 0)
+		&& (s[2] == ' ' || is_red(&s[2])))
 	{
-		while ((s[i] == '"' || s[i] == '\'') && s[i] )
+		while ((s[i] == '"' || s[i] == '\'') && s[i])
 		{
 			if (s[i] == '"')
 				s[i] = 20;
