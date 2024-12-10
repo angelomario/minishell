@@ -43,8 +43,6 @@ char	*ft_format_in_redir(char *s, int i, int j, char c)
 	data.q_s = 0;
 	data.q_duo = 0;
 	data.imput = malloc(sizeof(char) * data.len);
-	if (!data.imput)
-		return (NULL);
 	while (s[i])
 	{
 		if (s[i] == '"' && !data.q_s)

@@ -60,41 +60,11 @@ int	list_dirs(void)
 	return (1);
 }
 
-// int	list_all(const char *path)
-// {
-// 	struct dirent	*entry;
-// 	struct stat		info;
-// 	DIR				*dir;
-
-// 	dir = opendir(path);
-// 	if (dir == NULL)
-// 		return (-1);
-// 	while ((entry = readdir(dir)) != NULL)
-// 	{
-// 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-// 			continue ;
-// 		if (stat(full_path, &info) == 0)
-// 		{
-// 			if (S_ISDIR(info.st_mode))
-// 			{
-// 				printf("Diretório: %s\n", entry->d_name);
-// 				// Chama a função recursivamente para listar subdiretórios
-// 				list_all(entry->d_name);
-// 			}
-// 			else if (S_ISREG(info.st_mode))
-// 				printf("bash: `%s'\n", entry->d_name);
-// 		}
-// 	}
-// 	return (closedir(dir));
-// }
-
 int	check_identifiers(t_master *master, char *str)
 {
 	int	i;
 
 	i = 0;
-	if (str && !ft_strcmp(str, "*/"))
-		return (list_dirs());
 	if (str && !ft_isalpha(str[0]))
 	{
 		return (print_default_fd(master, ft_strdup("bash: export: `")),

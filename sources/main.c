@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-volatile sig_atomic_t g_sig = 0;
+volatile sig_atomic_t	g_sig = 0;
 
 int	ft_countchar(char *str, char ch)
 {
@@ -116,9 +116,7 @@ int	wait_prompt(t_master *master)
 		return (1);
 	if ((ft_countchar(master->imput, 127) > 0) && (ft_countchar(master->imput,
 				127) >= ft_count_matriz(master->in)))
-	{
 		wait_prompt(master);
-	}
 	return (0);
 }
 
@@ -313,6 +311,18 @@ void	process_signal(t_master *master)
 	g_sig = 42;
 }
 
+int	initialize_struture(t_master *master)
+{
+	master->history = NULL;
+	master->output = NULL;
+	master->in = NULL;
+	master->status = 0;
+	master->options[0] = NULL;
+	master->stdin_fd = dup(STDIN_FILENO);
+	master->stdout_fd = dup(STDOUT_FILENO);
+	return (0);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_master	*master;
@@ -321,15 +331,8 @@ int	main(int ac, char **av, char **env)
 	signal(SIGQUIT, SIG_IGN);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
-	master->history = NULL;
-	master->output = NULL;
-	master->in = NULL;
-	env = master->environ;
-	master->status = 0;
 	master->options = (char **)malloc(sizeof(char *) * 1);
-	master->options[0] = NULL;
-	master->stdin_fd = dup(STDIN_FILENO);
-	master->stdout_fd = dup(STDOUT_FILENO);
+	initialize_struture(master);
 	while (1 && av && ac)
 	{
 		master->imput = readline("minishell% ");

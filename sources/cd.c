@@ -55,11 +55,8 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 	char	*oldpwd;
 	char	*pwd;
 	char	*dir;
-	char	*error_msg;
 
 	i = 0;
-	if (!cwd)
-		return (free(cmd), 0);
 	oldpwd = ft_strjoin(cmd, cwd);
 	if (oldpwd)
 		ft_setenv(master, "OLDPWD=", oldpwd);
@@ -68,17 +65,12 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 	if (in[i] == NULL)
 		chdir(ft_getenv(master->environ, "HOME"));
 	else if (in[i])
-	{
 		if (chdir(in[i]) == -1)
 		{
-			error_msg = ft_strjoin("cd: no such file or directory: ", in[i]);
-			if (error_msg)
-			{
-				print_default_fd(master, error_msg);
-			}
+			print_default_fd(master,
+				ft_strjoin("cd: no such file or directory: ", in[i]));
 			printf("\n");
 		}
-	}
 	dir = getcwd(NULL, 0);
 	pwd = ft_strjoin("PWD=", dir);
 	return (ft_setenv(master, "PWD=", pwd), free(cwd), free(cmd), free(pwd),
@@ -92,8 +84,12 @@ int	ft_cd(t_master *master, char **in)
 	i = 0;
 	if (ft_strcmp(in[i], "cd") == 0)
 	{
-		ft_cd_(master, getcwd(NULL, 0), ft_strdup("OLDPWD="), in);
-		return (1);
+		if (ft_cd_(master, getcwd(NULL, 0), ft_strdup("OLDPWD="), in) == -1)
+		{
+			master->status = 127;
+			return (1);
+		}
+		return (0);
 	}
-	return (0);
+	return (1);
 }
