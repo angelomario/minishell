@@ -14,6 +14,17 @@
 
 void	ft_current_dir(t_master *master, char **av)
 {
+	if (access(av[0], F_OK) == 0)
+	{
+		if (access(av[0], X_OK) != 0 || access(av[0], R_OK) != 0 || access(av[0], W_OK) != 0)
+		{
+			print_default_fd(master, ft_strjoin("Permission denied: ", av[0]));
+			printf("\n");
+			exit(126);
+		}
+		else
+			exit(0);
+	}
 	print_default_fd(master, ft_strjoin("command not found: ", av[0]));
 	printf("\n");
 	exit(127);
