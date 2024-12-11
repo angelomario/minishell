@@ -77,10 +77,10 @@ int	quit(t_master *master, int status)
 // This function simplily exit of the actual proccess
 int	ft_exit(t_master *master, char **in)
 {
+	if (master->red)
+		exit(24);
 	if (ft_count_matriz(in) <= 2)
 	{
-		if (master->red)
-			exit(24);
 		if (ft_count_matriz(in) == 2 && valide_exit(in[1]))
 		{
 			free_matriz(master->in);
