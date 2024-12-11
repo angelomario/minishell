@@ -37,22 +37,22 @@ int	built_in_path(char *cmd_new)
 
 	len_path = ft_strlen(cmd_new);
 	if (len_path >= ft_strlen("env") && ft_strcmp(&(cmd_new[len_path
-				- ft_strlen("env")]), "env") == 0)
+					- ft_strlen("env")]), "env") == 0)
 		return (1);
 	if (len_path >= ft_strlen("export") && ft_strcmp(&(cmd_new[len_path
-				- ft_strlen("export")]), "export") == 0)
+					- ft_strlen("export")]), "export") == 0)
 		return (1);
 	if (len_path >= ft_strlen("echo") && ft_strcmp(&(cmd_new[len_path
-				- ft_strlen("echo")]), "echo") == 0)
+					- ft_strlen("echo")]), "echo") == 0)
 		return (1);
 	if (len_path >= ft_strlen("cd") && ft_strcmp(&(cmd_new[len_path
-				- ft_strlen("cd")]), "cd") == 0)
+					- ft_strlen("cd")]), "cd") == 0)
 		return (1);
 	if (len_path >= ft_strlen("pwd") && ft_strcmp(&(cmd_new[len_path
-				- ft_strlen("pwd")]), "pwd") == 0)
+					- ft_strlen("pwd")]), "pwd") == 0)
 		return (1);
 	if (len_path >= ft_strlen("unset") && ft_strcmp(&(cmd_new[len_path
-				- ft_strlen("unset")]), "unset") == 0)
+					- ft_strlen("unset")]), "unset") == 0)
 		return (1);
 	return (0);
 }

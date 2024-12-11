@@ -27,7 +27,7 @@ void	format_imput(char **s, int n)
 			d_quote = !d_quote;
 		else if ((*s)[i] == '\'' && !d_quote)
 			s_quote = !s_quote;
-		if ((*s)[i] == ' ' && !d_quote && !s_quote)
+		if (((*s)[i] == ' ' || (*s)[i] == '\t') && !d_quote && !s_quote)
 			(*s)[i] = n;
 		i++;
 	}
