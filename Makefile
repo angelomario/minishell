@@ -21,7 +21,6 @@ INCLUDES = includes
 # FLAGS
 CC = cc 
 CFLAGS = -Wall -Wextra -Werror
-DFLAGS = -fsanitize=address -g
 EXTERNAL = -lreadline -lncurses
 RM = rm -rf
 MK = mkdir -p
