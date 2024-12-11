@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 11:51:06 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/25 22:33:32 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 01:04:05 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,10 @@ int	reset_fd(t_master *master, int pipefd[2], int *input_fd)
 int	ft_pipe(t_master *master)
 {
 	int	pipefd[2];
-	int	pid[ft_count_matriz(master->in)];
+	int	*pid;
 	int	i;
 
+	pid = malloc(sizeof(int) * ft_count_matriz(master->in));
 	i = -1;
 	while (master->in[++i] != NULL)
 	{
@@ -70,7 +71,7 @@ int	ft_pipe(t_master *master)
 				return (perror("Pipe"), -1);
 		pid[i] = fork();
 		if (pid[i] == -1)
-			return (perror("Fork"), -1);
+			return (free(pid), perror("Fork"), -1);
 		if (pid[i] == 0)
 			cur_instruction(master, pipefd, master->stdin_fd, &master->in[i]);
 		else
@@ -80,6 +81,21 @@ int	ft_pipe(t_master *master)
 	{
 		waitpid(pid[i], &master->status, 0);
 		master->status = WEXITSTATUS(master->status);
+	}
+	return (free(pid), 0);
+}
+
+int	ft_find_way(t_master *master)
+{
+	if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, 127))
+		&& ft_valid_args(master->in))
+	{
+		do_pipe(master);
+	}
+	else
+	{
+		if (ft_redirect(master, master->imput) == -1)
+			return (-1);
 	}
 	return (0);
 }

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 19:23:55 by joandre           #+#    #+#             */
-/*   Updated: 2024/10/22 19:48:24 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 00:22:41 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_strcmp(char *s1, char *s2)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	if (!s1 || !s2)
 		return (-1);

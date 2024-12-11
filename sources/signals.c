@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 16:29:23 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/19 16:29:47 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/12/11 01:37:02 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern volatile sig_atomic_t g_sig;
+extern volatile sig_atomic_t	g_sig;
 
 void	exit_130(int sig)
 {
@@ -33,13 +33,11 @@ void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
-
 int	kill_proccess(int pid, char *del, int stdout)
 {
 	if (del && (stdout))
 	{
-		ft_putstr_fd("bash: warning: here-document at line 5 delimited by end-of-file (wanted `",
-			stdout);
+		ft_putstr_fd("bash: warning:  by EOF (expected `',", stdout);
 		ft_putstr_fd(del, stdout);
 		ft_putstr_fd("')\n", stdout);
 	}
@@ -51,8 +49,8 @@ int	kill_proccess(int pid, char *del, int stdout)
 	return (-1);
 }
 
-void	breaker(int	sig)
+void	breaker(int sig)
 {
 	g_sig = sig;
-	write(1, "\n", 1);
+	printf("\n");
 }

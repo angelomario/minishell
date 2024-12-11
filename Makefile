@@ -6,7 +6,7 @@
 #    By: joandre <joandre@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/25 15:32:04 by joandre           #+#    #+#              #
-#    Updated: 2024/11/26 06:19:36 by joandre          ###   ########.fr        #
+#    Updated: 2024/12/11 00:14:50 by joandre          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,9 +26,9 @@ EXTERNAL = -lreadline -lncurses
 RM = rm -rf
 MK = mkdir -p
 
-FILES = extra.c main.c\
-	read_bin.c echo.c free.c exit.c unset.c\
-	env.c export.c dir_errors.c heredoc.c strsplit.c\
+FILES = extra.c main.c aux_redir.c aux_redir2.c expanded.c\
+	read_bin.c echo.c free.c exit.c unset.c utils3.c utils4.c\
+	env.c export.c aux_export.c heredoc.c strsplit.c\
 	pipe.c pwd.c cd.c signals.c redirect.c parse.c utils.c utils2.c
 SRC = $(addprefix $(DIR)/, $(FILES))
 SRC_OBJ = $(addprefix $(DIR_OBJ)/, $(FILES:.c=.o))

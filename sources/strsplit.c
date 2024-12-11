@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strsplit.c                                      :+:      :+:    :+:   */
+/*   strsplit.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:49:05 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/12 12:49:08 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/12/11 01:38:43 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,32 @@ char	**ft_strsplit(char *s, char *delimiter)
 	if (strs == NULL)
 		return (NULL);
 	return (ft_sep_words(strs, size, (char *)s, delimiter));
+}
+
+int	replace_env(t_master *master, char *name, char *value)
+{
+	char	**env;
+	int		nlen;
+
+	env = master->environ;
+	if (ft_strchr(name, '=') == NULL)
+		nlen = ft_strlen(name);
+	else
+		nlen = ft_strlen(name) - 1;
+	while (*env)
+	{
+		if ((ft_strncmp(*env, name, nlen) == 0) && ((*env)[nlen] == '='
+			|| (*env)[nlen] == '\0'))
+		{
+			if (value == NULL && ft_strchr(name, '='))
+				return (free(*env), (*env = ft_joincheck(name, value)), 0);
+			if (ft_strlen(ft_strchr(*env, '=')) > 1 && !value)
+				return (0);
+			free(*env);
+			*env = ft_joincheck(name, value);
+			return (0);
+		}
+		env++;
+	}
+	return (-1);
 }

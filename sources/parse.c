@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 16:58:07 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/26 12:27:40 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 08:37:05 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,9 @@ int	countdels(char *in)
 void	trim_whitespace(char *str)
 {
 	char	*end;
+	char	*start;
 
-	char *start = str;
+	start = str;
 	while (*start && *start == ' ')
 		start++;
 	if (*start == '\0')
@@ -51,7 +52,7 @@ void	trim_whitespace(char *str)
 		str[0] = '\0';
 		return ;
 	}
-	end = start + strlen(start) - 1;
+	end = start + ft_strlen(start) - 1;
 	while (end > start && *end == ' ')
 		end--;
 	*(end + 1) = '\0';

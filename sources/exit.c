@@ -67,25 +67,34 @@ int	array_exit(char **in)
 	return (1);
 }
 
+int	quit(t_master *master, int status)
+{
+	print_default_fd(master, ft_strdup("exit\n"));
+	exit(status);
+	return (0);
+}
+
 // This function simplily exit of the actual proccess
 int	ft_exit(t_master *master, char **in)
 {
 	if (ft_count_matriz(in) <= 2)
 	{
+		if (master->red)
+			exit(24);
 		if (ft_count_matriz(in) == 2 && valide_exit(in[1]))
 		{
 			free_matriz(master->in);
 			free(master->imput);
 			if (str_true(in[1]) == 0)
-				exit(ft_atoi(in[1]));
+				quit(master, ft_atoi(in[1]));
 			else
-				exit(0);
+				quit(master, 0);
 		}
 		else if (ft_count_matriz(in) == 1)
 		{
 			free_matriz(master->in);
 			free(master->imput);
-			exit(0);
+			quit(master, 0);
 		}
 	}
 	else if (array_exit(&in[1]))

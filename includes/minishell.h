@@ -6,12 +6,12 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/03 00:39:30 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 12:57:39 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_L
-# define MINISHELL_L
+#ifndef MINISHELL_H
+# define MINISHELL_H
 
 # include "../libft/libft.h"
 # include <dirent.h>
@@ -28,7 +28,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-
 typedef struct s_master
 {
 	pid_t	pid;
@@ -42,6 +41,7 @@ typedef struct s_master
 	pid_t	pid_child;
 	char	*output;
 	char	**options;
+	int		red;
 }			t_master;
 
 typedef struct s_data
@@ -72,7 +72,6 @@ int			ft_env(t_master *master);
 int			ft_echo(char **in);
 int			ft_unset(t_master *master, char **str);
 int			ft_exit(t_master *master, char **in);
-// void		*ft_realloc(void *ptr, size_t new_size);
 void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 int			ft_export(t_master *master, char *name, char *value);
 int			export(t_master *master, char **in);
@@ -88,12 +87,27 @@ int			its_ok(char *str);
 char		**ft_strsplit(char *s, char *delimiter);
 int			heredoc(t_master *master, char **in);
 void		rm_void(char **mat);
+int			ft_expand_matrix(t_master *master, char **in);
 int			ft_pipe(t_master *master);
 int			ft_cd(t_master *master, char **in);
 int			ft_pwd(t_master *master, char **in);
 void		sigquit_handler(int sig);
 void		sigint_handler(int sig);
+// redirirection
 int			ft_redirect(t_master *master, char *str);
+char		*ft_check_type_redir(char *type_redir);
+int			ft_len_redir(t_master *master, char **in);
+int			redir_input(char *filename, int flag);
+int			redir_output(char *name, int append);
+char		**add_str(char **matrix, char *new_string);
+int			to_configure(t_master *master, char *param, int flag,
+				int (*f)(char *, int));
+int			configure(t_master *master, char **in);
+int			there_is_redirect(char **in);
+int			do_heredoc(t_master *master, char **in);
+char		**concatmatrix(t_master *master, char **mat1, char **mat2);
+int			wait_sons(t_master *master);
+// end redirection
 char		**parsedel(char *imput);
 int			ft_heredoc(t_master *master, char *del);
 void		format_imput(char **s, int n);
@@ -120,4 +134,23 @@ int			ft_clean_master(t_master *master);
 char		*ft_strncat(char *dest, char *source, size_t dest_size);
 int			correct_pipes(char *str);
 void		ft_replace_c(char *s);
+void		ft_replace_c(char *s);
+int			wait_sons(t_master *master);
+int			ft_isalnum_more(int c);
+void		str_replace_all(char *str, char target, char to_replace);
+char		*get_name(char *str);
+int			list_dirs(void);
+int			check_identifiers(t_master *master, char *str);
+int			do_export(t_master *master, char *in);
+int			filter_export(t_master *master, char **in);
+char		*ft_very_and_bar(char *path);
+int			ft_countchar(char *str, char ch);
+int			currect_tmp(char *tmp);
+int			wait_prompt(t_master *master);
+int			do_pipe(t_master *master);
+int			correct_pipes(char *str);
+int			ft_find_way(t_master *master);
+int			ft_valid_args(char **in);
+int			replace_env(t_master *master, char *name, char *value);
+char		*ft_joincheck(char *name, char *value);
 #endif

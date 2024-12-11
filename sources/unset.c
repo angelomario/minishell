@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 08:38:29 by aquissan          #+#    #+#             */
-/*   Updated: 2024/10/30 08:40:07 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/12/11 08:33:56 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ int	ft_unset(t_master *master, char **str)
 	while (*str != NULL)
 	{
 		env = master->environ;
-		if (*str == NULL || strchr(*str, '=') != NULL)
+		if (*str == NULL || ft_strchr(*str, '=') != NULL)
 			return (-1);
 		while (*env != NULL)
 		{
 			if (ft_strncmp(*(env), *str, ft_strlen(*str)) == 0
 				&& ((*env)[ft_strlen(*str)] == '='
-					|| ft_strlen(*env) == ft_strlen(*str)))
+				|| ft_strlen(*env) == ft_strlen(*str)))
 			{
 				next_env = env;
 				compare(next_env);

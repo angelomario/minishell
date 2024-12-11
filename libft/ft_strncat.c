@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isascii.c                                       :+:      :+:    :+:   */
+/*   ft_strncat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:18:56 by joandre           #+#    #+#             */
-/*   Updated: 2024/05/23 10:18:58 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 00:29:57 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	*ft_strncat(char *dest, char *source, size_t dest_size)
 {
-	size_t i;
-	size_t j;
+	size_t	i;
+	size_t	j;
 
 	if (!dest || !source || dest_size == 0)
 		return (NULL);
@@ -29,6 +29,5 @@ char	*ft_strncat(char *dest, char *source, size_t dest_size)
 		dest[i] = '\0';
 	else if (dest_size > 0)
 		dest[dest_size - 1] = '\0';
-
 	return (dest);
 }

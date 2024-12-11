@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc2.c                                         :+:      :+:    :+:   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 07:31:20 by aquissan          #+#    #+#             */
-/*   Updated: 2024/11/23 07:31:29 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/12/11 01:40:04 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 		if (!input)
 		{
 			print_default_fd(master,
-				ft_strjoin("bash: warning: here-document at line 5 delimited by end-of-file (wanted `",
+				ft_strjoin("bash: warning: here-doc at EOF (wanted `",
 					del));
 			print_default_fd(master, ft_strdup("')\n"));
 			exit(127);

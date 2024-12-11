@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   extra.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/11 01:46:33 by joandre           #+#    #+#             */
+/*   Updated: 2024/12/11 01:46:34 by joandre          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*ft_strstr(char *s1, char *s2)
@@ -94,32 +106,4 @@ void	ft_concert_env(t_master *master)
 		remove_if_even(*env, '"');
 		env++;
 	}
-}
-
-char	*remove_if_even(char *str, char ch)
-{
-	int	count;
-	int	i;
-	int	j;
-
-	if (!str)
-		return (NULL);
-	count = 0;
-	i = -1;
-	while (str[++i])
-		if (str[i] == ch)
-			count++;
-	if (count % 2 == 0 && count > 1)
-	{
-		i = 0;
-		j = 0;
-		while (str[i])
-		{
-			if (str[i] != ch)
-				str[j++] = str[i];
-			i++;
-		}
-		str[j] = '\0';
-	}
-	return (str);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/11 01:12:35 by joandre           #+#    #+#             */
+/*   Updated: 2024/12/11 01:16:53 by joandre          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 int	print_default_fd(t_master *master, char *msg)
@@ -51,30 +63,30 @@ void	ft_setenv(t_master *master, char *name_var, char *new_value)
 
 int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 {
+	t_data	data;
 	int		i;
-	char	*oldpwd;
-	char	*pwd;
-	char	*dir;
 
 	i = 0;
-	oldpwd = ft_strjoin(cmd, cwd);
-	if (oldpwd)
-		ft_setenv(master, "OLDPWD=", oldpwd);
-	free(oldpwd);
+	data.oldpwd = ft_strjoin(cmd, cwd);
+	if (data.oldpwd)
+		ft_setenv(master, "OLDPWD=", data.oldpwd);
+	free(data.oldpwd);
 	i++;
 	if (in[i] == NULL)
 		chdir(ft_getenv(master->environ, "HOME"));
 	else if (in[i])
+	{
 		if (chdir(in[i]) == -1)
 		{
 			print_default_fd(master,
 				ft_strjoin("cd: no such file or directory: ", in[i]));
 			printf("\n");
 		}
-	dir = getcwd(NULL, 0);
-	pwd = ft_strjoin("PWD=", dir);
-	return (ft_setenv(master, "PWD=", pwd), free(cwd), free(cmd), free(pwd),
-		free(dir), 0);
+	}
+	data.dir = getcwd(NULL, 0);
+	data.pwd = ft_strjoin("PWD=", data.dir);
+	return (ft_setenv(master, "PWD=", data.pwd), free(cwd), free(cmd),
+		free(data.pwd), free(data.dir), 0);
 }
 
 int	ft_cd(t_master *master, char **in)
@@ -84,6 +96,11 @@ int	ft_cd(t_master *master, char **in)
 	i = 0;
 	if (ft_strcmp(in[i], "cd") == 0)
 	{
+		if (!in[1])
+		{
+			print_default_fd(master, ft_strdup("cd: HOME not set\n"));
+			return (127);
+		}
 		if (ft_cd_(master, getcwd(NULL, 0), ft_strdup("OLDPWD="), in) == -1)
 		{
 			master->status = 127;

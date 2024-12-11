@@ -6,127 +6,16 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 14:06:21 by aquissan          #+#    #+#             */
-/*   Updated: 2024/12/03 00:38:57 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 01:28:54 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// This is the function that reproduces the behavior of the default export function
-// This function set any variable with your value available in any child proccess
-
-char	*get_name(char *str)
-{
-	int		i;
-	int		j;
-	char	*name;
-
-	i = 0;
-	if (str == NULL || !str[0])
-		return (NULL);
-	while (str[i] && str[i] != '=')
-		i++;
-	if (str[i] == '=')
-		i++;
-	j = -1;
-	name = (char *)malloc(sizeof(char) * i + 2);
-	while (++j < i)
-		name[j] = str[j];
-	name[j] = '\0';
-	return (name);
-}
-
-int	list_dirs(void)
-{
-	struct dirent	*entry;
-	struct stat		info;
-	DIR				*dir;
-
-	dir = opendir(".");
-	while ((entry = readdir(dir)) != NULL)
-	{
-		if (ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name,
-				"..") == 0)
-		{
-			continue ;
-		}
-		if (stat(entry->d_name, &info) == 0 && S_ISDIR(info.st_mode))
-		{
-			printf("bash: export: `%s': not a valid identifier\n",
-				entry->d_name);
-		}
-	}
-	closedir(dir);
-	return (1);
-}
-
-int	check_identifiers(t_master *master, char *str)
-{
-	int	i;
-
-	i = 0;
-	if (str && !ft_isalpha(str[0]))
-	{
-		return (print_default_fd(master, ft_strdup("bash: export: `")),
-			print_default_fd(master, ft_strdup(str)), print_default_fd(master,
-				ft_strdup("': not a valid identifier\n")), 1);
-	}
-	while (str != NULL && str[i])
-	{
-		if (str[i] == '=')
-			return (0);
-		if (ft_isalnum(str[i]) || str[i] == '_')
-			i++;
-		else
-		{
-			return (print_default_fd(master, ft_strdup("bash: export: `")),
-				print_default_fd(master, ft_strdup(str)),
-				print_default_fd(master,
-					ft_strdup("': not a valid identifier\n")), 1);
-		}
-	}
-	return (0);
-}
-
-int	do_export(t_master *master, char *in)
-{
-	int		i;
-	char	*name;
-
-	i = 0;
-	in = remove_if_even(in, '\"');
-	name = get_name(in);
-	if ((ft_strchr(in, '=')) == NULL)
-		i = ft_export(master, name, NULL);
-	else
-	{
-		if (ft_strlen(ft_strchr(in, '=')) <= 1)
-			i = ft_export(master, name, NULL);
-		else
-			i = ft_export(master, name, &(ft_strchr(in, '=')[1]));
-	}
-	return (free(name), i);
-}
-
-int	filter_export(t_master *master, char **in)
-{
-	int	i;
-
-	i = 1;
-	if (ft_count_matriz(in) <= 1)
-		ft_export(master, NULL, NULL);
-	else
-	{
-		while (in && in[i] != NULL)
-		{
-			if (check_identifiers(master, in[i]))
-				i++;
-			else
-				do_export(master, in[i++]);
-		}
-	}
-	return (0);
-}
+// This is the function
+// that reproduces the behavior of the default export function
+// This function set any variable with your
+// value available in any child proccess
 
 void	ft_putstrenv(char *str, int asp)
 {
@@ -200,35 +89,6 @@ char	*ft_joincheck(char *name, char *value)
 	else
 		ft_strcat(new_var, "\"\"");
 	return (new_var);
-}
-
-int	replace_env(t_master *master, char *name, char *value)
-{
-	char	**env;
-	int		nlen;
-
-	env = master->environ;
-	if (ft_strchr(name, '=') == NULL)
-		nlen = ft_strlen(name);
-	else
-		nlen = ft_strlen(name) - 1;
-	while (*env)
-	{
-		if ((ft_strncmp(*env, name, nlen) == 0) && ((*env)[nlen] == '=' || (*env)[nlen] == '\0'))
-		{
-			if (value == NULL && ft_strchr(name, '='))
-			{
-				return (free(*env), (*env = ft_joincheck(name, value)), 0);
-			}
-			if (ft_strlen(ft_strchr(*env, '=')) > 1 && !value)
-				return (0);
-			free(*env);
-			*env = ft_joincheck(name, value);
-			return (0);
-		}
-		env++;
-	}
-	return (-1);
 }
 
 int	ft_export(t_master *master, char *name, char *value)

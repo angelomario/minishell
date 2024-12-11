@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:30:08 by joandre           #+#    #+#             */
-/*   Updated: 2024/11/22 12:47:49 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/11 00:23:28 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int					ft_isalnum(int c);
 int					ft_isascii(int c);
 int					ft_isprint(int c);
 int					ft_strcmp(char *s1, char *s2);
-int				ft_strlen(const char *s);
+int					ft_strlen(const char *s);
 void				*ft_memset(void *s, int c, size_t n);
 void				ft_bzero(void *s, size_t n);
 void				*ft_memcpy(void *dest, const void *src, size_t n);
