@@ -33,33 +33,6 @@ char	*get_name(char *str)
 	return (name);
 }
 
-int	list_dirs(void)
-{
-	struct dirent	*entry;
-	struct stat		info;
-	DIR				*dir;
-
-	dir = opendir(".");
-	if (!dir)
-		return (1);
-	entry = readdir(dir);
-	while (entry != NULL)
-	{
-		if (ft_strcmp(entry->d_name, ".") != 0 && ft_strcmp(entry->d_name,
-				"..") != 0)
-		{
-			if (stat(entry->d_name, &info) == 0 && S_ISDIR(info.st_mode))
-			{
-				printf("bash: export: `%s': not a valid identifier\n",
-					entry->d_name);
-			}
-		}
-		entry = readdir(dir);
-	}
-	closedir(dir);
-	return (1);
-}
-
 int	check_identifiers(t_master *master, char *str)
 {
 	int	i;

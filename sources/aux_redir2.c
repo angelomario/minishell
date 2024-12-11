@@ -52,17 +52,17 @@ int	configure(t_master *master, char **in)
 		if (ft_strcmp(in[i], ">") == 0 && in[i + 1] != NULL)
 		{
 			if (to_configure(master, in[i + 1], 0, redir_output) == -1)
-				exit(127);
+				exit(1);
 		}
 		else if (ft_strcmp(in[i], ">>") == 0 && in[i + 1] != NULL)
 		{
 			if (to_configure(master, in[i + 1], 1, redir_output) == -1)
-				exit(127);
+				exit(1);
 		}
 		else if (ft_strcmp(in[i], "<") == 0 && in[i + 1] != NULL)
 		{
 			if (to_configure(master, in[i + 1], 0, redir_input) == -1)
-				exit(127);
+				exit(1);
 		}
 		i++;
 	}
