@@ -1,0 +1,10 @@
+b
+includes
+libft
+LICENSE
+Makefile
+minishell
+objects
+README.md
+sources
+z

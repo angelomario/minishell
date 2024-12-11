@@ -19,7 +19,7 @@ DIR_OBJ = objects
 DIR_LIB = libft
 INCLUDES = includes
 # FLAGS
-CC = cc 
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 EXTERNAL = -lreadline -lncurses
 RM = rm -rf

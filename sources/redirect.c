@@ -87,13 +87,17 @@ int	ft_redirect(t_master *master, char *str)
 
 	tmp = ft_format_in_redir(str, 0, 0, 127);
 	in = ft_split(tmp, 127);
-	rm_void(in);
+	// rm_void(in);
 	if (there_is_redirect(in))
 	{
 		master->red = 1;
 		if (!ft_len_redir(master, in))
+		{
 			if (do_redirect(master, in) == -1)
 				return (free(tmp), free_matriz(in), -1);
+		}
+		else
+			return (free(tmp), free_matriz(in), -1);
 		return (free(tmp), free_matriz(in), 0);
 	}
 	else

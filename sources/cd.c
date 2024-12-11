@@ -94,6 +94,11 @@ int	ft_cd(t_master *master, char **in)
 	int	i;
 
 	i = 0;
+	if (ft_count_matriz(in) > 2)
+	{
+		print_default_fd(master, ft_strdup("bash: cd: too many arguments\n"));
+		return (1);
+	}
 	if (ft_strcmp(in[i], "cd") == 0)
 	{
 		if (!in[1])
