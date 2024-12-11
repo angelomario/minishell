@@ -81,6 +81,8 @@ int	currect_tmp(char *tmp)
 	int	i;
 
 	i = 0;
+	if (tmp)
+		trim_whitespace(tmp);
 	if (ft_strcmp(tmp, "") == 0)
 		return (0);
 	while (tmp[i] && (tmp[i] == ' ' || tmp[i] == '\t'))
