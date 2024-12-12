@@ -22,7 +22,7 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 	dup2(master->stdout_fd, STDOUT_FILENO);
 	while (1)
 	{
-		input = readline("heredoc> ");
+		input = readline("O> ");
 		if (!input)
 		{
 			print_default_fd(master,

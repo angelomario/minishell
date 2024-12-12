@@ -92,7 +92,7 @@ int	main(int ac, char **av, char **env)
 	initialize_struture(master);
 	while (1 && av && ac)
 	{
-		master->imput = readline("minishell% ");
+		master->imput = readline("Cortana> ");
 		process_signal(master);
 		if (master->imput)
 			trim_whitespace(master->imput);
