@@ -20,14 +20,19 @@
 void	ft_putstrenv(char *str, int asp)
 {
 	int	i;
+	int	equal;
 
 	i = 0;
+	equal = 0;
 	while (str[i])
 	{
 		write(1, &str[i], 1);
-		if (((str[i] == '=') || (str[i + 1] == '\0' && ft_strchr(str, '=')))
-			&& asp && ft_strchr(str, '\"') == NULL)
+		if ((((str[i] == '=') && equal == 0) || (str[i + 1] == '\0'
+					&& ft_strchr(str, '='))) && asp && ft_strchr(str,
+				'\"') == NULL)
 			write(1, "\"", 1);
+		if (str[i] == '=' && equal == 0)
+			equal = 1;
 		i++;
 	}
 }

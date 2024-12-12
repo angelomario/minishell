@@ -27,10 +27,7 @@ int	to_configure(t_master *master, char *param, int flag, int (*f)(char *, int))
 	mat = ft_split(param, 127);
 	i = 1;
 	if (f(mat[0], flag) == -1)
-		return (print_default_fd(master, ft_strjoin("bash: ", param)),
-			print_default_fd(master,
-				ft_strdup(": No such file or directory\n")), free_matriz(mat),
-			-1);
+		return (check_permission(master, param), free_matriz(mat), -1);
 	if (ft_count_matriz(mat) > 1)
 	{
 		while (mat[i])

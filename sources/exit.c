@@ -21,9 +21,12 @@ int	valide_exit(char *str)
 		return (1);
 	while (str && str[i])
 	{
-		if (!ft_isdigit(str[i]))
+		if ((str[0] == '-') && i == 0)
+			i++;
+		else if (!ft_isdigit(str[i]))
 			return (0);
-		i++;
+		else
+			i++;
 	}
 	return (1);
 }
@@ -35,9 +38,12 @@ int	str_true(char *str)
 	i = 0;
 	while (str && str[i])
 	{
-		if (!ft_isdigit(str[i]))
+		if ((str[0] == '-') && i == 0)
+			i++;
+		else if (!ft_isdigit(str[i]))
 			return (1);
-		i++;
+		else
+			i++;
 	}
 	return (0);
 }
@@ -69,6 +75,8 @@ int	array_exit(char **in)
 
 int	quit(t_master *master, int status)
 {
+	if (status < 0)
+		status += 256;
 	print_default_fd(master, ft_strdup("exit\n"));
 	exit(status);
 	return (0);

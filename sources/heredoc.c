@@ -12,6 +12,54 @@
 
 #include "../includes/minishell.h"
 
+extern volatile sig_atomic_t	g_sig;
+
+void	exit_heredoc(int sig)
+{
+	if (sig == SIGINT)
+	{
+		write(1, "\n", 1);
+		exit(120);
+	}
+}
+
+int	check_exit(t_master *master)
+{
+	if (master->status == 130)
+		return (-1);
+	else
+		return (0);
+}
+
+int	hered(t_master *master, char **mat)
+{
+	int		i;
+	char	*tmp;
+	char	**in;
+
+	i = -1;
+	tmp = NULL;
+	master->pid_child = fork();
+	if (master->pid_child == 0)
+	{
+		while (mat[++i])
+		{
+			trim_whitespace(mat[i]);
+			tmp = ft_format_in_redir(mat[i], 0, 0, 127);
+			in = ft_split(tmp, 127);
+			do_heredoc(master, in);
+			free_matriz(in);
+			free(tmp);
+		}
+		return (exit(0), 0);
+	}
+	signal(SIGINT, SIG_IGN);
+	waitpid(master->pid_child, &master->status, 0);
+	master->status = WEXITSTATUS(master->status);
+	signal(SIGINT, sigint_handler);
+	return (check_exit(master));
+}
+
 int	child(t_master *master, char *del, int pipe_fd[2])
 {
 	char	*input;

@@ -87,6 +87,8 @@ int	ft_pipe(t_master *master)
 
 int	ft_find_way(t_master *master)
 {
+	if (hered(master, master->in) == -1)
+		return (free_matriz(master->in), free(master->output), -1);
 	if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, 127))
 		&& ft_valid_args(master->in))
 	{

@@ -39,6 +39,8 @@ int	ft_aux_main(t_master *master)
 	if (its_ok(master->imput))
 	{
 		master->imput = expan_env(master, master->imput);
+		if (!master->imput)
+			return (free(master->imput), 0);
 		ft_replace_c(master->imput);
 		trim_whitespace(master->imput);
 		str_replace_del(&master->imput[0], '|', 127);
@@ -74,6 +76,7 @@ int	initialize_struture(t_master *master)
 	master->in = NULL;
 	master->status = 0;
 	master->red = 0;
+	master->pid_child = 0;
 	master->options[0] = NULL;
 	master->stdin_fd = dup(STDIN_FILENO);
 	master->stdout_fd = dup(STDOUT_FILENO);

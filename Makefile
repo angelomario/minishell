@@ -28,7 +28,8 @@ MK = mkdir -p
 FILES = extra.c main.c aux_redir.c aux_redir2.c expanded.c\
 	read_bin.c echo.c free.c exit.c unset.c utils3.c utils4.c\
 	env.c export.c aux_export.c heredoc.c strsplit.c\
-	pipe.c pwd.c cd.c signals.c redirect.c parse.c utils.c utils2.c
+	pipe.c pwd.c cd.c signals.c redirect.c parse.c utils.c utils2.c\
+	permissions.c
 SRC = $(addprefix $(DIR)/, $(FILES))
 SRC_OBJ = $(addprefix $(DIR_OBJ)/, $(FILES:.c=.o))
 

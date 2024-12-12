@@ -22,7 +22,7 @@ int	do_redirect(t_master *master, char **in)
 	if (master->pid_child == 0)
 	{
 		free(master->output);
-		do_heredoc(master, in);
+		// do_heredoc(master, in);
 		configure(master, in);
 		if (is_redirect(in[0]) && ft_count_matriz(master->options) >= 1)
 			ft_memset(in[0], ' ', ft_strlen(in[0]));

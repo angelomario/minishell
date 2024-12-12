@@ -91,11 +91,11 @@ int	redir_output(char *name, int append)
 		fd = open(name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
-		return (perror("bash"), -1);
+		return (-1);
 	}
 	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
-		perror("Erro ao redirecionar stdout");
+		perror("Dup2");
 		close(fd);
 		return (-1);
 	}

@@ -84,8 +84,10 @@ int	do_export(t_master *master, char *in)
 int	filter_export(t_master *master, char **in)
 {
 	int	i;
+	int		bad_identifier;
 
 	i = 1;
+	bad_identifier = 0;
 	if (ft_count_matriz(in) <= 1)
 		ft_export(master, NULL, NULL);
 	else
@@ -93,10 +95,13 @@ int	filter_export(t_master *master, char **in)
 		while (in && in[i] != NULL)
 		{
 			if (check_identifiers(master, in[i]))
+			{
+				bad_identifier = 1;
 				i++;
+			}
 			else
 				do_export(master, in[i++]);
 		}
 	}
-	return (0);
+	return (bad_identifier);
 }
