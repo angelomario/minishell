@@ -77,6 +77,7 @@ int	initialize_struture(t_master *master)
 	master->options[0] = NULL;
 	master->stdin_fd = dup(STDIN_FILENO);
 	master->stdout_fd = dup(STDOUT_FILENO);
+	signal(SIGQUIT, SIG_IGN);
 	return (0);
 }
 
@@ -85,7 +86,6 @@ int	main(int ac, char **av, char **env)
 	t_master	*master;
 
 	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
 	master = (t_master *)malloc(sizeof(t_master));
 	master->environ = ft_arrdup(env);
 	master->options = (char **)malloc(sizeof(char *) * 1);
@@ -101,6 +101,7 @@ int	main(int ac, char **av, char **env)
 			ft_aux_main(master);
 		else
 		{
+			add_history(master->imput);
 			printf("command not found: \'\'\n");
 			free(master->imput);
 		}

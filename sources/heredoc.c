@@ -47,6 +47,7 @@ int	ft_heredoc(t_master *master, char *del)
 
 	if (pipe(pipe_fd) == -1)
 		return (perror("Pipe"), -1);
+	trim_whitespace(del);
 	master->pid_child = fork();
 	if (master->pid_child == 0)
 	{
