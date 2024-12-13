@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   permissions.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aquissan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 16:12:18 by aquissan          #+#    #+#             */
-/*   Updated: 2024/12/12 16:12:55 by aquissan         ###   ########.fr       */
+/*   Updated: 2024/12/13 07:10:19 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	check_permission(t_master *master, char *str)
 
 	if (str)
 		trim_whitespace(str);
-	printf("%c\n", str[0]);
 	if (stat(str, &file) != -1)
 	{
 		if (S_ISDIR(file.st_mode))
@@ -37,4 +36,20 @@ int	check_permission(t_master *master, char *str)
 	print_default_fd(master, ft_strjoin("bash: ", str));
 	print_default_fd(master, ft_strdup(": No such file or directory\n"));
 	return (1);
+}
+
+int	ft_is_directory(t_master *master, char *str)
+{
+	struct stat	file;
+
+	if (stat(str, &file) != -1)
+	{
+		trim_whitespace(str);
+		if (S_ISDIR(file.st_mode) == 0 )
+		{
+			return (print_default_fd(master, ft_strjoin("bash: ", str)),
+				print_default_fd(master, ft_strdup(": Is no a directory\n")), 1);
+		}
+	}
+	return (0);
 }

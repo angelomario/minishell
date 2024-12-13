@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/11 12:57:39 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/13 07:11:33 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,5 +154,6 @@ int			ft_valid_args(char **in);
 int			replace_env(t_master *master, char *name, char *value);
 char		*ft_joincheck(char *name, char *value);
 int			check_permission(t_master *master, char *str);
+int			ft_is_directory(t_master *master, char *str);
 int			hered(t_master *master, char **mat);
 #endif

@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 04:58:30 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/11 13:08:22 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/13 08:47:56 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,15 @@
 
 void	ft_current_dir(t_master *master, char **av)
 {
-	if (access(av[0], F_OK) == 0)
+	if (ft_check_type_redir(av[0]) != NULL && av[1] == NULL)
 	{
-		if (access(av[0], X_OK) != 0 || access(av[0], R_OK) != 0
-			|| access(av[0], W_OK) != 0)
-		{
-			print_default_fd(master, ft_strjoin("Permission denied: ", av[0]));
-			printf("\n");
-			exit(126);
-		}
-		else
-			exit(0);
+		print_default_fd(master,
+			ft_strdup("bash: syntax error near unexpected token `newline'"));
+		printf("\n");
+		exit(2);
 	}
-	print_default_fd(master, ft_strjoin("command not found: ", av[0]));
-	printf("\n");
-	exit(127);
+	if (check_permission(master, av[0]) == 1)
+		exit(126);
 }
 
 int	built_in_path(char *cmd_new)
@@ -37,22 +31,22 @@ int	built_in_path(char *cmd_new)
 
 	len_path = ft_strlen(cmd_new);
 	if (len_path >= ft_strlen("env") && ft_strcmp(&(cmd_new[len_path
-					- ft_strlen("env")]), "env") == 0)
+				- ft_strlen("env")]), "env") == 0)
 		return (1);
 	if (len_path >= ft_strlen("export") && ft_strcmp(&(cmd_new[len_path
-					- ft_strlen("export")]), "export") == 0)
+				- ft_strlen("export")]), "export") == 0)
 		return (1);
 	if (len_path >= ft_strlen("echo") && ft_strcmp(&(cmd_new[len_path
-					- ft_strlen("echo")]), "echo") == 0)
+				- ft_strlen("echo")]), "echo") == 0)
 		return (1);
 	if (len_path >= ft_strlen("cd") && ft_strcmp(&(cmd_new[len_path
-					- ft_strlen("cd")]), "cd") == 0)
+				- ft_strlen("cd")]), "cd") == 0)
 		return (1);
 	if (len_path >= ft_strlen("pwd") && ft_strcmp(&(cmd_new[len_path
-					- ft_strlen("pwd")]), "pwd") == 0)
+				- ft_strlen("pwd")]), "pwd") == 0)
 		return (1);
 	if (len_path >= ft_strlen("unset") && ft_strcmp(&(cmd_new[len_path
-					- ft_strlen("unset")]), "unset") == 0)
+				- ft_strlen("unset")]), "unset") == 0)
 		return (1);
 	return (0);
 }

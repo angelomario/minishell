@@ -6,7 +6,7 @@
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 01:12:35 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/11 01:16:53 by joandre          ###   ########.fr       */
+/*   Updated: 2024/12/13 07:55:06 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,15 +72,12 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 		ft_setenv(master, "OLDPWD=", data.oldpwd);
 	free(data.oldpwd);
 	i++;
-	if (in[i] == NULL)
-		chdir(ft_getenv(master->environ, "HOME"));
-	else if (in[i])
+	if (in[i])
 	{
 		if (chdir(in[i]) == -1)
 		{
-			print_default_fd(master,
-				ft_strjoin("cd: no such file or directory: ", in[i]));
-			printf("\n");
+			if (ft_is_directory(master, in[i]) == 0)
+			check_permission(master, in[i]);
 		}
 	}
 	data.dir = getcwd(NULL, 0);

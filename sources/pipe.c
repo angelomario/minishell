@@ -59,36 +59,32 @@ int	reset_fd(t_master *master, int pipefd[2], int *input_fd)
 int	ft_pipe(t_master *master)
 {
 	int	pipefd[2];
-	int	*pid;
+	int	pid;
 	int	i;
 
-	pid = malloc(sizeof(int) * ft_count_matriz(master->in));
 	i = -1;
 	while (master->in[++i] != NULL)
 	{
 		if (master->in[i + 1] != NULL)
 			if (pipe(pipefd) == -1)
 				return (perror("Pipe"), -1);
-		pid[i] = fork();
-		if (pid[i] == -1)
-			return (free(pid), perror("Fork"), -1);
-		if (pid[i] == 0)
+		pid = fork();
+		if (pid < 0)
+			return (perror("Fork"), -1);
+		if (pid == 0)
 			cur_instruction(master, pipefd, master->stdin_fd, &master->in[i]);
 		else
+		{
 			reset_fd(master, pipefd, &master->stdin_fd);
+			waitpid(pid, &master->status, 0);
+			master->status = WEXITSTATUS(master->status);
+		}
 	}
-	while (i-- != 0)
-	{
-		waitpid(pid[i], &master->status, 0);
-		master->status = WEXITSTATUS(master->status);
-	}
-	return (free(pid), 0);
+	return (0);
 }
 
 int	ft_find_way(t_master *master)
 {
-	if (hered(master, master->in) == -1)
-		return (free_matriz(master->in), free(master->output), -1);
 	if ((ft_count_matriz(master->in) >= 2 || ft_countchar(master->imput, 127))
 		&& ft_valid_args(master->in))
 	{
