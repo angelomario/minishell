@@ -61,8 +61,10 @@ int	ft_pipe(t_master *master)
 	int	pipefd[2];
 	int	pid;
 	int	i;
+	int	stdin_fd;
 
 	i = -1;
+	stdin_fd = dup(STDIN_FILENO);
 	while (master->in[++i] != NULL)
 	{
 		if (master->in[i + 1] != NULL)
@@ -72,10 +74,10 @@ int	ft_pipe(t_master *master)
 		if (pid < 0)
 			return (perror("Fork"), -1);
 		if (pid == 0)
-			cur_instruction(master, pipefd, master->stdin_fd, &master->in[i]);
+			cur_instruction(master, pipefd, stdin_fd, &master->in[i]);
 		else
 		{
-			reset_fd(master, pipefd, &master->stdin_fd);
+			reset_fd(master, pipefd, &stdin_fd);
 			waitpid(pid, &master->status, 0);
 			master->status = WEXITSTATUS(master->status);
 		}

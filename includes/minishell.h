@@ -156,4 +156,5 @@ char		*ft_joincheck(char *name, char *value);
 int			check_permission(t_master *master, char *str);
 int			ft_is_directory(t_master *master, char *str);
 int			hered(t_master *master, char **mat);
+int			check_commander(t_master *master, char *str);
 #endif

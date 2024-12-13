@@ -65,8 +65,10 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 {
 	t_data	data;
 	int		i;
+	int		ret;
 
 	i = 0;
+	ret = 0;
 	data.oldpwd = ft_strjoin(cmd, cwd);
 	if (data.oldpwd)
 		ft_setenv(master, "OLDPWD=", data.oldpwd);
@@ -76,14 +78,16 @@ int	ft_cd_(t_master *master, char *cwd, char *cmd, char **in)
 	{
 		if (chdir(in[i]) == -1)
 		{
-			if (ft_is_directory(master, in[i]) == 0)
-			check_permission(master, in[i]);
+			ret = ft_is_directory(master, in[i]);
+			if (!ret)
+				if (check_permission(master, in[i]) == 1)
+					ret = 1;
 		}
 	}
 	data.dir = getcwd(NULL, 0);
 	data.pwd = ft_strjoin("PWD=", data.dir);
 	return (ft_setenv(master, "PWD=", data.pwd), free(cwd), free(cmd),
-		free(data.pwd), free(data.dir), 0);
+		free(data.pwd), free(data.dir), ret);
 }
 
 int	ft_cd(t_master *master, char **in)
@@ -103,9 +107,8 @@ int	ft_cd(t_master *master, char **in)
 			print_default_fd(master, ft_strdup("cd: HOME not set\n"));
 			return (127);
 		}
-		if (ft_cd_(master, getcwd(NULL, 0), ft_strdup("OLDPWD="), in) == -1)
+		if (ft_cd_(master, getcwd(NULL, 0), ft_strdup("OLDPWD="), in) == 1)
 		{
-			master->status = 127;
 			return (1);
 		}
 		return (0);

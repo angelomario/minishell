@@ -62,7 +62,8 @@ void	process_var(char *input, int *i, t_master *master, int *j)
 	}
 	else
 	{
-		while ((input[*i] && (isalnum(input[*i]))) || input[*i] == '_' || input[*i] == '@')
+		while ((input[*i] && (isalnum(input[*i]))) || input[*i] == '_'
+			|| input[*i] == '@')
 			(*i)++;
 		ft_strncpy(data.var_name, &input[data.var_start], *i - data.var_start);
 		data.var_name[*i - data.var_start] = '\0';

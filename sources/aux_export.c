@@ -84,7 +84,7 @@ int	do_export(t_master *master, char *in)
 int	filter_export(t_master *master, char **in)
 {
 	int	i;
-	int		bad_identifier;
+	int	bad_identifier;
 
 	i = 1;
 	bad_identifier = 0;

@@ -90,7 +90,9 @@ int	there_is_redirect(char **in)
 
 int	do_heredoc(t_master *master, char **in)
 {
-	int	i;
+	int		i;
+	int		j;
+	char	**mat;
 
 	i = 0;
 	signal(SIGINT, exit_130);
@@ -98,7 +100,13 @@ int	do_heredoc(t_master *master, char **in)
 	{
 		if (ft_strcmp(in[i], "<<") == 0 && in[i + 1] != NULL)
 		{
-			ft_heredoc(master, in[++i]);
+			j = 0;
+			format_imput(&in[i + 1], 127);
+			mat = ft_split(in[i + 1], 127);
+			ft_heredoc(master, mat[0]);
+			while (mat[++j])
+				master->options = add_str(master->options, mat[i++]);
+			free_matriz(mat);
 		}
 		i++;
 	}
