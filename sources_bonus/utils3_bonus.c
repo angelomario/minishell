@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell_bonus.h"
 
 int	ft_countchar(char *str, char ch)
 {
@@ -95,7 +95,7 @@ int	wait_prompt(t_master *master)
 	char	*tmp;
 	char	*new_input;
 
-	tmp = readline("o> ");
+	tmp = readline("O 2.0> ");
 	if (!tmp)
 		exit(42);
 	if (correct_pipes(tmp) == 0 || validpipe(tmp) == 0)

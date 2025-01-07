@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell_bonus.h"
 
 extern volatile sig_atomic_t	g_sig;
 

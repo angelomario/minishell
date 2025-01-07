@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell_bonus.h"
 
 int	cur_instruction(t_master *master, int pipefd[2], int input_fd, char **input)
 {

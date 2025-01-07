@@ -1,40 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 16:29:23 by aquissan          #+#    #+#             */
-/*   Updated: 2024/12/11 01:37:02 by joandre          ###   ########.fr       */
+/*   Created: 2024/12/11 00:34:41 by joandre           #+#    #+#             */
+/*   Updated: 2024/12/11 00:34:46 by joandre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-extern volatile sig_atomic_t	g_sig;
-
-void	exit_130(int sig)
+int	ft_pwd(t_master *master, char **in)
 {
-	g_sig = sig;
-	if (sig == SIGINT)
+	char	*cwd;
+
+	cwd = getcwd(NULL, 0);
+	(void)master;
+	if (ft_strcmp(in[0], "pwd") == 0)
 	{
-		write(1, "\n", 1);
-		exit(130);
+		printf("%s\n", cwd);
+		free(cwd);
+		return (0);
 	}
-}
-
-void	sigint_handler(int sig)
-{
-	g_sig = sig;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
-
-void	breaker(int sig)
-{
-	g_sig = sig;
-	printf("\n");
+	free(cwd);
+	return (0);
 }

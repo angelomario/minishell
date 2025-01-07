@@ -67,7 +67,7 @@ int	child(t_master *master, char *del, int pipe_fd[2])
 	dup2(master->stdout_fd, STDOUT_FILENO);
 	while (1)
 	{
-		input = readline("O> ");
+		input = readline("O 2.0> ");
 		if (!input)
 		{
 			print_default_fd(master,

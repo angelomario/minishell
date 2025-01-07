@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell_bonus.h"
 
 volatile sig_atomic_t	g_sig = 0;
 
@@ -97,7 +97,7 @@ int	main(int ac, char **av, char **env)
 	initialize_struture(&master);
 	while (1 && av && ac)
 	{
-		master.imput = readline("Cortana> ");
+		master.imput = readline("Cortana 2.0> ");
 		master.red = 0;
 		process_signal(&master, 1);
 		if (master.imput)

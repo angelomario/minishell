@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell_bonus.h"
 
 int	ft_current_dir(t_master *master, char **av)
 {
@@ -109,7 +109,6 @@ void	ft_bin(t_master *master, char **av)
 				}
 			}
 		}
-		ft_current_dir(master, av);
 		exit(ft_cleanredchild(master, paths, ft_strdup("Angelo"), av));
 	}
 }
