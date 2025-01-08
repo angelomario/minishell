@@ -70,7 +70,7 @@ run: re $(NAME)
 
 run_leak: re $(NAME)
 	@clear
-	@valgrind --leak-check=full -s --show-leak-kinds=all --suppressions=../leak_supression.supp ./$(NAME)
+	@valgrind --leak-check=full -s --show-leak-kinds=all --suppressions=leak_supression.supp ./$(NAME)
 
 clean:
 	make clean -C $(DIR_LIB)
