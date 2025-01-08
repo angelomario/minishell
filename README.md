@@ -1,5 +1,5 @@
 # aquissan's minishell
-<html5>
+<!html5>
 <head>
 </head>
 <body>
