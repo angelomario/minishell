@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   minishell_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/13 07:11:33 by joandre          ###   ########.fr       */
+/*   Updated: 2025/03/06 14:06:52 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,15 @@ typedef struct s_master
 	char	**options;
 	int		red;
 }			t_master;
+
+typedef struct s_wild
+{
+	char*	pos;
+	char*	expr;
+	char*	pre;
+	char*	pattern;
+	char*	path;
+}	t_wild;
 
 typedef struct s_data
 {
@@ -162,4 +171,5 @@ int			ft_heredoc(t_master *master, char *del, char **mat, char **mat2);
 int			ft_cleanpipechild(t_master *master, char **command, char *tmp,
 				char **in);
 int			quit_of_conf(t_master *master, char **in);
+int			proccess_wildcard(t_master* master, char* input, int *j);
 #endif

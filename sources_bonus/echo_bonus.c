@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   echo.c                                             :+:      :+:    :+:   */
+/*   echo_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 08:25:32 by aquissan          #+#    #+#             */
-/*   Updated: 2024/12/11 00:07:24 by joandre          ###   ########.fr       */
+/*   Updated: 2025/03/01 06:40:56 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	ft_echo(char **in)
 		i = 1;
 		c = '\n';
 		if (in[i] == NULL)
-			return (ft_putchar_fd('\n', 1), 1);
+			return (ft_putchar_fd('\n', 1), 0);
 		ft_flag_echo(in, &i);
 		if (i > 1)
 			c = '\0';
@@ -84,5 +84,5 @@ int	ft_echo(char **in)
 		}
 		return (printf("%c", c), 0);
 	}
-	return (1);
+	return (0);
 }

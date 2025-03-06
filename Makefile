@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joandre <joandre@student.42.fr>            +#+  +:+       +#+         #
+#    By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/25 15:32:04 by joandre           #+#    #+#              #
-#    Updated: 2024/12/11 00:14:50 by joandre          ###   ########.fr        #
+#    Updated: 2025/03/03 13:58:48 by aquissan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ FILES_B = aux_export_bonus.c exit_bonus.c heredoc_bonus.c read_bin_bonus.c utils
 	cd_bonus.c extra_bonus.c permissions_bonus.c strsplit_bonus.c\
 	echo_bonus.c free_bonus.c pipe_bonus.c unset_bonus.c\
 	env_bonus.c ft_extra_bonus.c pwd_bonus.c utils2_bonus.c\
+	wildcards_bonus.c
 
 SRC = $(addprefix $(DIR)/, $(FILES))
 SRC_OBJ = $(addprefix $(DIR_OBJ)/, $(FILES:.c=.o))
@@ -63,15 +64,6 @@ $(NAME): $(DIR_LIB)/$(LIB) $(SRC_OBJ)
 $(DIR_OBJ)/%.o: $(DIR)/%.c
 	@$(MK) $(DIR_OBJ)
 	@$(CC) -I$(INCLUDES) $(CFLAGS) -L$(DIR_LIB) -lft -c $< -o $@
-
-run: re $(NAME)
-	@clear
-	@./$(NAME)
-
-run_leak: re $(NAME)
-	@clear
-	@valgrind --leak-check=full -s --show-leak-kinds=all --suppressions=leak_supression.supp ./$(NAME)
-
 clean:
 	make clean -C $(DIR_LIB)
 	$(RM) $(SRC_OBJ)
@@ -97,8 +89,13 @@ $(DIR_OBJ_B)/%.o: $(DIR_B)/%.c
 	@$(MK) $(DIR_OBJ_B)
 	@$(CC) -I$(INCLUDES) $(CFLAGS) -L$(DIR_LIB) -lft -c $< -o $@
 
+run: re
+	clear
+	./minishell
+brun: fclean bonus
+	clear
+	./minishell_bonus
 push: fclean
 	clear;
 	git branch;
 	git status && git add * && git status && git commit -m"in proccess" && git push;
-

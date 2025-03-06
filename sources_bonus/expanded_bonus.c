@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expanded.c                                         :+:      :+:    :+:   */
+/*   expanded_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:40:48 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/11 11:58:25 by joandre          ###   ########.fr       */
+/*   Updated: 2025/03/01 14:53:08 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/minishell_bonus.h"
 
 void	append_char(char **output, int *j, char c)
 {
@@ -126,6 +126,8 @@ char	*expan_env(t_master *master, char *imput)
 		else if (imput[s.i] == '$' && (imput[s.i + 1] != '\0'
 				&& ft_isalnum_more(imput[s.i + 1])) && !s.q_s)
 			process_var(imput, &s.i, master, &s.j);
+		else if (imput[s.i] == '*' && (s.i == 0 || (imput[s.i - 1] && (imput[s.i - 1] == ' ' || imput[s.i - 1] == '/'))))
+			proccess_wildcard(master, imput, &s.i);
 		else
 			append_char(&master->output, &s.j, imput[s.i]);
 		s.i++;

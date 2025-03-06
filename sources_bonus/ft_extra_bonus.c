@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell_bonus.h"
 
 int	ft_cleanredchild(t_master *master, char **command, char *tmp, char **in)
 {
@@ -22,7 +22,7 @@ int	ft_cleanredchild(t_master *master, char **command, char *tmp, char **in)
 	free(master->history);
 	free_matriz(in);
 	free(master->imput);
-	return (127);
+	return (0);
 }
 
 int	ft_cleanpipechild(t_master *master, char **command, char *tmp, char **in)

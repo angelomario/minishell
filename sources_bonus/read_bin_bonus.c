@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read_bin.c                                         :+:      :+:    :+:   */
+/*   read_bin_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 04:58:30 by joandre           #+#    #+#             */
-/*   Updated: 2024/12/13 08:47:56 by joandre          ###   ########.fr       */
+/*   Updated: 2025/03/01 06:43:43 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ void	ft_bin(t_master *master, char **av)
 				}
 			}
 		}
-		exit(ft_cleanredchild(master, paths, ft_strdup("Angelo"), av));
+		i = ft_current_dir(master, av);
+		ft_cleanredchild(master, paths, ft_strdup("Angelo"), av);
+		exit(i);
 	}
 }
