@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:40:48 by joandre           #+#    #+#             */
-/*   Updated: 2025/03/01 14:53:08 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/07 13:16:39 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,6 @@ char	*expan_env(t_master *master, char *imput)
 		else if (imput[s.i] == '$' && (imput[s.i + 1] != '\0'
 				&& ft_isalnum_more(imput[s.i + 1])) && !s.q_s)
 			process_var(imput, &s.i, master, &s.j);
-		else if (imput[s.i] == '*' && (s.i == 0 || (imput[s.i - 1] && (imput[s.i - 1] == ' ' || imput[s.i - 1] == '/'))))
-			proccess_wildcard(master, imput, &s.i);
 		else
 			append_char(&master->output, &s.j, imput[s.i]);
 		s.i++;
