@@ -28,59 +28,6 @@ int ft_valid_args(char **in)
 	return (1);
 }
 
-int	subst_word(char** str, char *to_add, int start)
-{
-	char*	tmp;
-	char*	tmp2;
-	char*	expr;
-	int	end;
-
-	end = start;
-	tmp = NULL;
-	while ((*str)[end] && ((*str)[end] != ' ' && (*str)[end] != '\t'))
-		end++;
-	if ((*str)[end])
-		tmp = ft_strdup(&(*str)[end]);
-	(*str)[start] = '\0';
-	expr = ft_strjoin(*str, to_add);
-	if (tmp)
-	{
-		tmp2 = ft_strjoin(expr, tmp);
-		free(expr);
-		free(tmp);
-		free(*str);
-		*str = tmp2;
-		return (0);
-	}
-	return (free(*str), *str = expr, 0);
-}
-
-void do_wildcard(char **input)
-{
-	int i;
-	char *tmp;
-
-	i = 0;
-	while ((*input) && (*input)[i])
-	{
-		tmp = NULL;
-		if ((*input)[i] == '*')
-			tmp = proccess_wildcard(get_wildcard_expression(*input, i));
-		if (tmp)
-		{
-			while (i > 0 && ((*input)[i] != ' ' && (*input)[i] != '\t'))
-				i--;
-			if (i == 0)
-				subst_word(input, tmp, i);
-			else
-				subst_word(input, tmp, i + 1);
-			free(tmp);
-			i = -1;
-		}
-		i++;
-	}
-}
-
 int ft_aux_main(t_master *master)
 {
 	if (!master->imput)

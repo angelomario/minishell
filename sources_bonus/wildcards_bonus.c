@@ -6,11 +6,13 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 06:35:27 by aquissan          #+#    #+#             */
-/*   Updated: 2025/03/08 11:24:28 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 14:51:13 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
+
+
 
 int check_inclusion(char **str, t_wild *wild)
 {
@@ -20,6 +22,8 @@ int check_inclusion(char **str, t_wild *wild)
     if (wild->pattern && *str)
     {
         if (append_pattern(str, wild->pattern) == 0)
+            return (1);
+        if (ft_strchr(wild->pattern, '/') && compare_append(str, wild->pattern))
             return (1);
         lenpatt = ft_strlen(wild->pattern) - 1;
         lenstr = ft_strlen((*str)) - 1;
@@ -31,34 +35,6 @@ int check_inclusion(char **str, t_wild *wild)
         return (lenpatt < 0);
     }
     return ((*str) != NULL);
-}
-
-int update_expression(char **expression, char **mat)
-{
-    int i;
-    int j;
-    int k;
-    int len;
-    char *expr;
-
-    i = 0;
-    len = 0;
-    while (mat && mat[i])
-        len += ft_strlen(mat[i++]);
-    expr = (char *)malloc(sizeof(char) * (len + 1 + i));
-    i = 0;
-    k = 0;
-    while (mat && mat[i])
-    {
-        j = -1;
-        while (mat[i][++j])
-            expr[k++] = mat[i][j];
-        i++;
-        if (mat[i])
-            expr[k++] = ' ';
-    }
-    free_matriz(mat);
-    return (expr[k] = '\0', free(*expression), *expression = expr, 0);
 }
 
 int check_path(char **full, char *to_cmp)
@@ -85,6 +61,22 @@ int check_path(char **full, char *to_cmp)
     return (free(*full), 1);
 }
 
+int before_add_expr(char** full_path, t_wild* wild, char***mat)
+{
+    if (check_path(full_path, wild->path))
+        return (1);
+    if (wild->pattern)
+    {
+        if (check_inclusion(full_path, wild))
+            addstronmat(mat, *full_path);
+        else
+            free(*full_path);
+    }
+    else
+        addstronmat(mat, *full_path);
+    return (0);
+}
+
 int set_waldcards(t_wild *wild, char **input)
 {
     struct dirent *entry;
@@ -101,20 +93,11 @@ int set_waldcards(t_wild *wild, char **input)
     mat[0] = NULL;
     while ((entry = readdir(dir)) != NULL)
     {
-        if (entry->d_name && entry->d_name[0] != '.')
+        if (entry->d_name[0] != '.')
         {
             full_path = ft_strdup(entry->d_name);
-            if (check_path(&full_path, wild->path))
+            if (before_add_expr(&full_path, wild, &mat))
                 continue;
-            if (wild->pattern)
-            {
-                if (check_inclusion(&full_path, wild))
-                    addstronmat(&mat, full_path);
-                else
-                    free(full_path);
-            }
-            else
-                addstronmat(&mat, full_path);
         }
     }
     update_expression(input, mat);
@@ -127,6 +110,7 @@ char *proccess_wildcard(char *input)
     t_wild wild;
 
     i = -1;
+    concert_expr(&input);
     while (input && input[++i])
     {
         if (input[i] == '*')

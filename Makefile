@@ -6,7 +6,7 @@
 #    By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/25 15:32:04 by joandre           #+#    #+#              #
-#    Updated: 2025/03/08 11:23:55 by aquissan         ###   ########.fr        #
+#    Updated: 2025/03/12 14:53:22 by aquissan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ FILES_B = aux_export_bonus.c exit_bonus.c heredoc_bonus.c read_bin_bonus.c utils
 	cd_bonus.c extra_bonus.c permissions_bonus.c strsplit_bonus.c\
 	echo_bonus.c free_bonus.c pipe_bonus.c unset_bonus.c\
 	env_bonus.c ft_extra_bonus.c pwd_bonus.c utils2_bonus.c\
-	wildcards_bonus.c gets_by_wild.c extra_by_wild.c free_wild_bonus.c\
+	wildcards_bonus.c gets_by_wild.c extra_by_wild.c free_wild_bonus.c wild_init.c\
 
 SRC = $(addprefix $(DIR)/, $(FILES))
 SRC_OBJ = $(addprefix $(DIR_OBJ)/, $(FILES:.c=.o))

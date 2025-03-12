@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2025/03/08 11:25:54 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 14:51:49 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,4 +179,9 @@ int 		remove_word(char *str, int index);
 char 		**addstronmat(char ***mat, char *str);
 int 		set_waldcards(t_wild *wild, char **input);
 int 		clean_wild(t_wild *wild);
+int			subst_word(char** str, char *to_add, int start);
+int			concert_expr(char** expr);
+void 		do_wildcard(char **input);
+int 		compare_append(char** str, char* pattern);
+int 		update_expression(char **expression, char **mat);
 #endif
