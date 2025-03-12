@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 17:34:01 by aquissan          #+#    #+#             */
-/*   Updated: 2025/03/12 16:57:49 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 17:20:02 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,15 @@ char	*get_name(char *str)
 int	in_quots(char *input, char ch)
 {
 	int	i;
-	int	d_quot;
-	int	s_quot;
 
-	s_quot = 0;
-	d_quot = 0;
 	i = 0;
 	while (input[i])
 	{
-		if (input[i] == '\'')
-			s_quot = !s_quot;
-		if (input[i] == '"')
-			d_quot = !d_quot;
 		if (input[i] == ch)
 		{
-			if (s_quot || d_quot)
+			if (i > 0 && (input[i - 1] == '"' || input[i - 1] == '\''))
+				return (1);
+			if (input[i + 1] && (input[i + 1] == '"' || input[i + 1] == '\''))
 				return (1);
 		}
 		i++;
