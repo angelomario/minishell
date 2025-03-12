@@ -6,17 +6,17 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:07:25 by joandre           #+#    #+#             */
-/*   Updated: 2025/03/07 16:44:42 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 15:09:36 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell_bonus.h"
 
-volatile sig_atomic_t g_sig = 0;
+volatile sig_atomic_t	g_sig = 0;
 
-int ft_valid_args(char **in)
+int	ft_valid_args(char **in)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (in[i])
@@ -28,11 +28,11 @@ int ft_valid_args(char **in)
 	return (1);
 }
 
-int ft_aux_main(t_master *master)
+int	ft_aux_main(t_master *master)
 {
 	if (!master->imput)
 		return (free_matriz(master->options), free_matriz(master->in),
-				free_matriz(master->environ), printf("exit\n"), exit(0), 0);
+			free_matriz(master->environ), printf("exit\n"), exit(0), 0);
 	trim_whitespace(master->imput);
 	if (ft_strcmp(master->imput, "") == 0)
 		return (free(master->imput), 0);
@@ -51,11 +51,12 @@ int ft_aux_main(t_master *master)
 			return (ft_masterclean(master), 0);
 	}
 	else
-		return (printf("Error\n"), master->output = (char *)malloc(sizeof(char) * 1), ft_clean_master(master), 0);
+		return (printf("Error\n"), master->output = (char *)malloc(sizeof(char)
+				* 1), ft_clean_master(master), 0);
 	return (ft_clean_master(master), 0);
 }
 
-void process_signal(t_master *master, int history)
+void	process_signal(t_master *master, int history)
 {
 	if (history && master->imput)
 	{
@@ -72,7 +73,7 @@ void process_signal(t_master *master, int history)
 	g_sig = 42;
 }
 
-int initialize_struture(t_master *master)
+int	initialize_struture(t_master *master)
 {
 	master->history = NULL;
 	master->output = NULL;
@@ -87,9 +88,9 @@ int initialize_struture(t_master *master)
 	return (0);
 }
 
-int main(int ac, char **av, char **env)
+int	main(int ac, char **av, char **env)
 {
-	t_master master;
+	t_master	master;
 
 	signal(SIGINT, sigint_handler);
 	master.environ = ft_arrdup(env);
@@ -103,7 +104,7 @@ int main(int ac, char **av, char **env)
 		if (master.imput)
 			trim_whitespace(master.imput);
 		if (!((ft_strcmp(master.imput, "\"\"") == 0) || (ft_strcmp(master.imput,
-																   "\'\'") == 0)))
+						"\'\'") == 0)))
 			ft_aux_main(&master);
 		else
 		{

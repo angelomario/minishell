@@ -6,7 +6,7 @@
 #    By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/25 15:32:04 by joandre           #+#    #+#              #
-#    Updated: 2025/03/12 14:53:22 by aquissan         ###   ########.fr        #
+#    Updated: 2025/03/12 15:33:03 by aquissan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -97,7 +97,7 @@ brun: fclean bonus
 	./minishell_bonus
 lrun: fclean bonus
 	clear
-	valgrind --suppressions=../.leak_supression.supp --leak-check=full ./minishell_bonus
+	valgrind --suppressions=leak_supression.supp --leak-check=full ./minishell_bonus
 push: fclean
 	clear;
 	git status;

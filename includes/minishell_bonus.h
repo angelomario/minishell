@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2025/03/12 14:51:49 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 15:05:09 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,12 @@ typedef struct s_master
 
 typedef struct s_wild
 {
-	char*	pos;
-	char*	pre;
-	char*	pattern;
-	char*	path;
-	char*	expr;
-}	t_wild;
+	char	*pos;
+	char	*pre;
+	char	*pattern;
+	char	*path;
+	char	*expr;
+}			t_wild;
 
 typedef struct s_data
 {
@@ -163,25 +163,25 @@ int			ft_heredoc(t_master *master, char *del, char **mat, char **mat2);
 int			ft_cleanpipechild(t_master *master, char **command, char *tmp,
 				char **in);
 int			quit_of_conf(t_master *master, char **in);
-char*		proccess_wildcard(char* input);
+char		*proccess_wildcard(char *input);
 char		*get_wildcard_expression(char *input, int wildpos);
 
 // WILD CARDS
-char 		*get_rest(char *input);
-char 		*get_wildcard_expression(char *input, int wildpos);
-char 		*get_pathdir(char *input, int j);
-char 		*get_pos_wild(char *input, int j);
-int 		append_pattern(char **str, char *pattern);
-int 		construct_wild(char **expression, t_wild *wild);
-char 		*get_pre_wild(char *expr, int pos);
-char 		*get_pattern(char **pos, int i);
-int 		remove_word(char *str, int index);
-char 		**addstronmat(char ***mat, char *str);
-int 		set_waldcards(t_wild *wild, char **input);
-int 		clean_wild(t_wild *wild);
-int			subst_word(char** str, char *to_add, int start);
-int			concert_expr(char** expr);
-void 		do_wildcard(char **input);
-int 		compare_append(char** str, char* pattern);
-int 		update_expression(char **expression, char **mat);
+char		*get_rest(char *input);
+char		*get_wildcard_expression(char *input, int wildpos);
+char		*get_pathdir(char *input, int j);
+char		*get_pos_wild(char *input, int j);
+int			append_pattern(char **str, char *pattern);
+int			construct_wild(char **expression, t_wild *wild);
+char		*get_pre_wild(char *expr, int pos);
+char		*get_pattern(char **pos, int i);
+int			remove_word(char *str, int index);
+char		**addstronmat(char ***mat, char *str);
+int			set_waldcards(t_wild *wild, char **input);
+int			clean_wild(t_wild *wild);
+int			subst_word(char **str, char *to_add, int start);
+int			concert_expr(char **expr);
+void		do_wildcard(char **input);
+int			compare_append(char **str, char *pattern);
+int			update_expression(char **expression, char **mat);
 #endif
