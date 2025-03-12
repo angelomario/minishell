@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:52:42 by aquissan          #+#    #+#             */
-/*   Updated: 2025/03/12 15:35:46 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 16:57:40 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	do_wildcard(char **input)
 	while ((*input) && (*input)[i])
 	{
 		tmp = NULL;
-		if ((*input)[i] == '*')
+		if ((*input)[i] == '*' && in_quots(*input, '*') == 0)
 			tmp = proccess_wildcard(get_wildcard_expression(*input, i));
 		if (tmp)
 		{

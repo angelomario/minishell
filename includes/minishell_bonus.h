@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:08:32 by joandre           #+#    #+#             */
-/*   Updated: 2025/03/12 15:05:09 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 16:56:11 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,4 +184,5 @@ int			concert_expr(char **expr);
 void		do_wildcard(char **input);
 int			compare_append(char **str, char *pattern);
 int			update_expression(char **expression, char **mat);
+int			in_quots(char *input, char ch);
 #endif

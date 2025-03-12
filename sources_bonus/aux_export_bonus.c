@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   aux_export.c                                       :+:      :+:    :+:   */
+/*   aux_export_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre <joandre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 17:34:01 by aquissan          #+#    #+#             */
-/*   Updated: 2024/12/11 00:51:59 by joandre          ###   ########.fr       */
+/*   Updated: 2025/03/12 16:57:49 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,31 @@ char	*get_name(char *str)
 		name[j] = str[j];
 	name[j] = '\0';
 	return (name);
+}
+
+int	in_quots(char *input, char ch)
+{
+	int	i;
+	int	d_quot;
+	int	s_quot;
+
+	s_quot = 0;
+	d_quot = 0;
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'')
+			s_quot = !s_quot;
+		if (input[i] == '"')
+			d_quot = !d_quot;
+		if (input[i] == ch)
+		{
+			if (s_quot || d_quot)
+				return (1);
+		}
+		i++;
+	}
+	return (0);
 }
 
 int	check_identifiers(t_master *master, char *str)

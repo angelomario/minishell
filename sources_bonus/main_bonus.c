@@ -6,7 +6,7 @@
 /*   By: aquissan <aquissan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 16:07:25 by joandre           #+#    #+#             */
-/*   Updated: 2025/03/12 15:09:36 by aquissan         ###   ########.fr       */
+/*   Updated: 2025/03/12 16:30:20 by aquissan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ int	ft_aux_main(t_master *master)
 		return (free(master->imput), 0);
 	if (its_ok(master->imput))
 	{
-		master->imput = expan_env(master, master->imput);
 		do_wildcard(&master->imput);
+		master->imput = expan_env(master, master->imput);
 		if (!master->imput)
 			return (free(master->imput), 0);
 		ft_replace_c(master->imput);
